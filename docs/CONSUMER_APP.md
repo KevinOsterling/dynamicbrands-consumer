@@ -134,13 +134,13 @@ config.ts             ← BACKEND_URL, WS_URL, PULL_INTERVAL_MS
 - Tamagotchi countdown timer and TAP button working ✅
 - Sender name displayed per card ✅
 - ConnectionBadge showing four states: connecting / live / polling / offline ✅
-- useEventStream hook fully wired and stable ✅
+- **Live WebSocket inbox complete — end-to-end verified** ✅
   - WS push envelope `{type:"dynamic_event",event:{...}}` correctly unwrapped ✅
   - Poll response `{events:[...]}` correctly unwrapped ✅
   - mountedRef guards prevent setState after unmount ✅
   - fetchMissed() on reconnect catches events from the disconnect gap ✅
-- End-to-end verified: POST `/admin/messages` → event appears in inbox instantly ✅
-- DEV_WALLET hardcoded (`0xa765...`) — Privy.io not yet integrated ⬜
+  - POST `/admin/messages` → event appears in inbox instantly, no page refresh ✅
+- DEV_WALLET hardcoded (`0xa765...`) — replace with Privy wallet when integrated ⬜
 - Privy.io wallet not yet integrated ⬜
 - FCM service worker not yet registered ⬜
 

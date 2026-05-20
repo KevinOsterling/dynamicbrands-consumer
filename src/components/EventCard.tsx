@@ -46,10 +46,15 @@ interface Props {
 
 export function EventCard({ event, onRead, onTap }: Props) {
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null)
+  const [formattedDate, setFormattedDate] = useState('')
   const isTamagotchi = event.eventType === 'tamagotchi_requirement'
   const isRead = !!event.readAt
 
   const senderLabel = event.senderName ?? 'Dynamic Brands'
+
+  useEffect(() => {
+    setFormattedDate(new Date(event.createdAt).toLocaleString('es-PE', { hour12: true }))
+  }, [event.createdAt])
 
   useEffect(() => {
     if (!isTamagotchi || !event.expiresAt) return
@@ -83,7 +88,7 @@ export function EventCard({ event, onRead, onTap }: Props) {
           </p>
           <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">{event.body}</p>
           <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1">
-            {new Date(event.createdAt).toLocaleString('es-PE', { hour12: true })}
+            {formattedDate}
           </p>
         </div>
       </div>

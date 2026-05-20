@@ -43,7 +43,10 @@ export function useEventStream(wallet: string | null) {
       async function poll() {
         try {
           const res = await fetch(`${BACKEND_URL}/consumers/${wallet}/events`)
-          if (res.ok) addEvents(await res.json())
+          if (res.ok) {
+            const data = await res.json()
+            addEvents(Array.isArray(data) ? data : (data.events ?? []))
+          }
         } catch {}
       }
       poll()
@@ -68,8 +71,14 @@ export function useEventStream(wallet: string | null) {
 
       ws.onmessage = ({ data }) => {
         try {
-          const parsed = JSON.parse(data) as DynamicEvent | DynamicEvent[]
-          addEvents(Array.isArray(parsed) ? parsed : [parsed])
+          const parsed = JSON.parse(data)
+          if (Array.isArray(parsed)) {
+            addEvents(parsed)
+          } else if (parsed?.events) {
+            addEvents(parsed.events)
+          } else if (parsed?.id) {
+            addEvents([parsed])
+          }
         } catch {}
       }
 

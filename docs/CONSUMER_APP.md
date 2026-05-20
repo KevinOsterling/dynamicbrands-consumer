@@ -1,6 +1,7 @@
+<!-- Source of truth: dynamicbrands-consumer/docs/CONSUMER_APP.md -->
 # CONSUMER_APP.md — Dynamic Brands Consumer App
 *Last updated: May 2026*
-*Status: Phase 1 in progress — Dynamic Events inbox built and verified.*
+*Status: Phase 1 in progress — Events inbox complete, bottom nav built, stub screens added.*
 
 ---
 
@@ -19,14 +20,14 @@ No app store download required in Phase 1. Future Phase 3+: smart glasses and VR
 `https://github.com/KevinOsterling/dynamicbrands-consumer`
 
 ## Stack
-- Framework: Next.js (TypeScript, Tailwind CSS, App Router)
-- Wallet: Privy.io (Phase 1: custodial, always exportable)
-- Port: 3001
+- Framework: Next.js 16, React 19, Tailwind v4, TypeScript
+- Wallet: Privy.io (Phase 1: custodial, always exportable) — pending integration
+- Port: 3000 (default)
 - Backend API: `http://localhost:3002` (dev) / env var `NEXT_PUBLIC_BACKEND_URL`
 
 ## Commands
 ```bash
-npm run dev    # Development server on port 3001
+npm run dev    # Development server on port 3000
 npm run build  # Production build
 npm run start  # Production server
 ```
@@ -35,13 +36,16 @@ npm run start  # Production server
 
 ## Navigation Structure
 
-| Tab | Screen | Status |
-|-----|--------|--------|
-| **Events** | Dynamic Events (home) | ✅ Built — live backend |
-| **Wallet** | Dynamic Brands Wallet | ⬜ Planned |
-| **Map** | Map / AR | ⬜ Planned |
-| **DAO** | Brand Governance | ⬜ Planned |
-| **AMM** | NFT Market | ⬜ Planned |
+Bottom nav (`src/components/BottomNav.tsx`) is built and wired. Four tabs in Phase 1:
+
+| Tab | Icon | Route | Status |
+|-----|------|-------|--------|
+| **Events** | 📬 | `/` | ✅ Complete — live backend |
+| **Wallet** | 💳 | `/wallet` | ⬜ Stub only |
+| **DAO** | 🗳️ | `/dao` | ⬜ Stub only |
+| **AMM** | 📈 | `/amm` | ⬜ Stub only |
+
+Map screen is architecturally planned (see SYSTEM.md) but not in the current nav — will be added when Map/AR work begins.
 
 ---
 
@@ -115,23 +119,34 @@ Manages all three channels in one hook:
 ---
 
 ## Project Structure
+```
 src/
-app/
-page.tsx              ← Server component — renders EventFeed
-components/
-EventFeed.tsx         ← 'use client' — connects to useEventStream, renders live events
-EventCard.tsx         ← Individual event card with Tamagotchi timer
-ConnectionBadge.tsx   ← connecting / live / polling / offline indicator
-hooks/
-useEventStream.ts     ← WS + Pull fallback + reconnect, wired to EventFeed
-lib/
-types.ts              ← DynamicEvent, EventType, SenderType
-config.ts             ← BACKEND_URL, WS_URL, PULL_INTERVAL_MS
+  app/
+    layout.tsx            ← Root layout — metadata, fonts, BottomNav
+    page.tsx              ← Server component — renders EventFeed
+    manifest.ts           ← PWA manifest (Next.js 16 MetadataRoute.Manifest)
+    wallet/page.tsx       ← Stub — "Coming soon"
+    dao/page.tsx          ← Stub — "Coming soon"
+    amm/page.tsx          ← Stub — "Coming soon"
+  components/
+    BottomNav.tsx         ← 'use client' — 4-tab fixed bottom nav, active tab blue
+    EventFeed.tsx         ← 'use client' — connects to useEventStream, renders live events
+    EventCard.tsx         ← Individual event card with Tamagotchi timer
+    ConnectionBadge.tsx   ← connecting / live / polling / offline indicator
+  hooks/
+    useEventStream.ts     ← WS + Pull fallback + reconnect, wired to EventFeed
+  lib/
+    types.ts              ← DynamicEvent, EventType, SenderType
+    config.ts             ← BACKEND_URL, WS_URL, PULL_INTERVAL_MS
+```
 
 ---
 
 ## Current State (May 2026)
-- Next.js app scaffolded and running on port 3001 ✅
+- Next.js 16 / React 19 / Tailwind v4 app running on port 3000 ✅
+- PWA manifest configured (`src/app/manifest.ts`) — name "Dynamic Brands", dark zinc theme ✅
+- Bottom nav built — 4 tabs (Events / Wallet / DAO / AMM), active tab blue, fixed bottom ✅
+- Stub pages for Wallet / DAO / AMM ✅
 - All 21 event types styled with icons and border colors ✅
 - Tamagotchi countdown timer and TAP button working ✅
 - Sender name displayed per card ✅
@@ -142,17 +157,21 @@ config.ts             ← BACKEND_URL, WS_URL, PULL_INTERVAL_MS
   - mountedRef guards prevent setState after unmount ✅
   - fetchMissed() on reconnect catches events from the disconnect gap ✅
   - POST `/admin/messages` → event appears in inbox instantly, no page refresh ✅
+- Date formatter hydration mismatch fixed (useEffect + useState, empty string SSR fallback) ✅
 - DEV_WALLET hardcoded (`0xa765...`) — replace with Privy wallet when integrated ⬜
 - Privy.io wallet not yet integrated ⬜
 - FCM service worker not yet registered ⬜
+- Map screen not yet in nav — planned for Phase 2 ⬜
 
 ---
 
 ## Next Steps
 1. Integrate Privy.io — replace hardcoded DEV_WALLET with real wallet address
 2. Register FCM service worker for push notifications when app is closed
-3. Build Wallet screen
-4. Build bottom navigation (Events / Wallet / Map / DAO / AMM)
+3. Build Wallet screen content (NFT balances, USDC balance, transaction history)
+4. Build DAO screen content (proposal list, voting)
+5. Build AMM screen content (NFT market listings)
+6. Add Map tab to nav when Map/AR work begins
 
 ---
 

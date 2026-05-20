@@ -21,6 +21,8 @@ export type EventType =
   | 'audit_requirement_brand'
   | 'c2c_message'
 
+export type SenderType = 'blockchain' | 'brand' | 'platform' | 'consumer'
+
 export interface DynamicEvent {
   id: string
   eventType: EventType
@@ -30,4 +32,5 @@ export interface DynamicEvent {
   readAt?: string
   expiresAt?: string
   senderName?: string
+  senderType?: SenderType
 }

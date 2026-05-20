@@ -92,7 +92,11 @@ export function useEventStream(wallet: string | null) {
         if (Array.isArray(parsed)) {
           addEvents(parsed)
         } else if (parsed?.events) {
+          // pull-style envelope: {events: [...]}
           addEvents(parsed.events)
+        } else if (parsed?.event) {
+          // push envelope: {type:"dynamic_event", event:{...}}
+          addEvents([parsed.event])
         } else if (parsed?.id) {
           addEvents([parsed])
         }

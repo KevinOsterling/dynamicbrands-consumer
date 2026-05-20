@@ -130,24 +130,24 @@ config.ts             ← BACKEND_URL, WS_URL, PULL_INTERVAL_MS
 
 ## Current State (May 2026)
 - Next.js app scaffolded and running on port 3001 ✅
-- Dynamic Events inbox rendering with mock data ✅
 - All 21 event types styled with icons and border colors ✅
 - Tamagotchi countdown timer and TAP button working ✅
 - Sender name displayed per card ✅
-- ConnectionBadge showing "En vivo" ✅
-- useEventStream hook built — not yet wired to live backend ⬜
+- ConnectionBadge showing four states: connecting / live / polling / offline ✅
+- useEventStream hook built and wired — WS + 30s poll fallback + 5s reconnect ✅
+- Live backend connected at `ws://localhost:3002/ws?wallet=` ✅
+- End-to-end live test passed: POST `/admin/messages` → event appears in inbox ✅
+- DEV_WALLET hardcoded (`0xa765...`) — Privy.io not yet integrated ⬜
 - Privy.io wallet not yet integrated ⬜
 - FCM service worker not yet registered ⬜
 
 ---
 
 ## Next Steps
-1. Wire `useEventStream` hook to replace mock `EventFeed` state
-2. Connect to live backend WebSocket at `ws://localhost:3002/ws?wallet=`
-3. Integrate Privy.io — replace hardcoded DEV_WALLET with real wallet address
-4. Register FCM service worker for push notifications when app is closed
-5. Build Wallet screen
-6. Build bottom navigation (Events / Wallet / Map / DAO / AMM)
+1. Integrate Privy.io — replace hardcoded DEV_WALLET with real wallet address
+2. Register FCM service worker for push notifications when app is closed
+3. Build Wallet screen
+4. Build bottom navigation (Events / Wallet / Map / DAO / AMM)
 
 ---
 

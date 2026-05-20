@@ -37,7 +37,7 @@ npm run start  # Production server
 
 | Tab | Screen | Status |
 |-----|--------|--------|
-| **Events** | Dynamic Events (home) | ✅ Built — mock data |
+| **Events** | Dynamic Events (home) | ✅ Built — live backend |
 | **Wallet** | Dynamic Brands Wallet | ⬜ Planned |
 | **Map** | Map / AR | ⬜ Planned |
 | **DAO** | Brand Governance | ⬜ Planned |
@@ -57,10 +57,12 @@ The Consumer App receives messages through three channels managed by the backend
 
 ### useEventStream hook (`src/hooks/useEventStream.ts`)
 Manages all three channels in one hook:
-- Connects WebSocket on mount
+- Connects WebSocket on mount; backend push envelope: `{type:"dynamic_event",event:{...}}`
 - Auto-reconnects after 5s on drop
-- Switches to 30s Pull polling when WS is down
-- Deduplicates events by id
+- Switches to 30s Pull polling when WS is down; pull response: `{events:[...]}`
+- Calls `fetchMissed()` on every reconnect to catch events from the disconnect gap
+- Deduplicates events by id across both channels
+- `mountedRef` guard prevents setState calls after unmount
 - Exposes: `events`, `connectionState`, `markRead`
 
 ### Connection states
@@ -117,11 +119,11 @@ src/
 app/
 page.tsx              ← Server component — renders EventFeed
 components/
-EventFeed.tsx         ← 'use client' — owns inbox state, mock data for now
+EventFeed.tsx         ← 'use client' — connects to useEventStream, renders live events
 EventCard.tsx         ← Individual event card with Tamagotchi timer
-ConnectionBadge.tsx   ← Live / polling / offline indicator
+ConnectionBadge.tsx   ← connecting / live / polling / offline indicator
 hooks/
-useEventStream.ts     ← WS + Pull fallback hook (ready, not yet wired to page)
+useEventStream.ts     ← WS + Pull fallback + reconnect, wired to EventFeed
 lib/
 types.ts              ← DynamicEvent, EventType, SenderType
 config.ts             ← BACKEND_URL, WS_URL, PULL_INTERVAL_MS

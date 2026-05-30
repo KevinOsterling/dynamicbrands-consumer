@@ -311,6 +311,38 @@ Fixed-price on-chain marketplace for ERC-1155 brand NFTs. TransparentUpgradeable
 | `C:\Users\ManiMiranda\dynamicbrands\contracts\` | Reading or editing Solidity source files |
 | `docs/BACKOFFICE.md` | Working on or designing the AI Agents back office layer |
 
+---
+
+## Documentation File Map — Absolute Paths
+*Claude Code must read this before touching any .md file.
+Never create a new .md file if one with that name already exists anywhere in this map.
+Always edit the existing file in place.*
+
+| File | Full Path on Disk |
+|------|-------------------|
+| SYSTEM.md | `C:\Users\ManiMiranda\dynamicbrands-backend\docs\SYSTEM.md` |
+| ARCHITECTURE.md | `C:\Users\ManiMiranda\dynamicbrands-backend\docs\ARCHITECTURE.md` |
+| FRONTEND.md | `C:\Users\ManiMiranda\dynamicbrands-dashboard\docs\FRONTEND.md` |
+| BACKEND.md | `C:\Users\ManiMiranda\dynamicbrands-backend\docs\BACKEND.md` |
+| AMM.md | `C:\Users\ManiMiranda\dynamicbrands\docs\AMM.md` |
+| CONSUMER_APP.md | `C:\Users\ManiMiranda\dynamicbrands-consumer\docs\CONSUMER_APP.md` |
+| CONTRACTS.md | `C:\Users\ManiMiranda\dynamicbrands\docs\CONTRACTS.md` |
+| BLOCKCHAIN.md | `C:\Users\ManiMiranda\dynamicbrands-backend\docs\BLOCKCHAIN.md` |
+| DESIGN.md | `C:\Users\ManiMiranda\dynamicbrands-dashboard\docs\DESIGN.md` |
+| ORACLE.md | `C:\Users\ManiMiranda\dynamicbrands-backend\docs\ORACLE.md` |
+| BACKOFFICE.md | `C:\Users\ManiMiranda\dynamicbrands-backend\docs\BACKOFFICE.md` |
+| ADMIN_DASHBOARD.md | `C:\Users\ManiMiranda\dynamicbrands-backend\docs\ADMIN_DASHBOARD.md` |
+| BACKLOG.md | `C:\Users\ManiMiranda\dynamicbrands\docs\BACKLOG.md` |
+| DEV_ONLY.md | `C:\Users\ManiMiranda\dynamicbrands-backend\docs\DEV_ONLY.md` |
+
+Before editing any .md file, Claude Code must:
+1. Confirm the file exists at the exact path shown above using the terminal
+2. Edit the file at that path — never create a duplicate
+3. If a file is NOT in this map, ask Kevin where it should live before creating it
+4. After any session that adds a new .md file, add it to this map before closing the session
+
+---
+
 ## Claude Session Rules (C-3PO Behavior Protocol)
 
 ### Rule 1 — Read Before Claiming
@@ -368,3 +400,11 @@ When implementing NFT configuration UI, include:
   where autoDistribute = true
 - autoDistribute field in Supabase brands table
 This is a confirmed product decision from the May 2026 session.
+
+### Rule 8 — Documentation Map Enforcement
+Before creating or editing any .md file, Claude Code must:
+1. Check the Documentation File Map in this file for the exact path
+2. Confirm the file exists at that path using the terminal before touching it
+3. If the file is NOT in the map, ask Kevin where it should live before creating it
+4. Never create a new .md file with the same name as an existing one regardless of directory
+5. After any session that adds a new .md file, add it to this map before closing the session

@@ -332,7 +332,7 @@ Always edit the existing file in place.*
 | ORACLE.md | `C:\Users\ManiMiranda\dynamicbrands-backend\docs\ORACLE.md` |
 | BACKOFFICE.md | `C:\Users\ManiMiranda\dynamicbrands-backend\docs\BACKOFFICE.md` |
 | ADMIN_DASHBOARD.md | `C:\Users\ManiMiranda\dynamicbrands-backend\docs\ADMIN_DASHBOARD.md` |
-| BACKLOG.md | `C:\Users\ManiMiranda\dynamicbrands\docs\BACKLOG.md` |
+| BACKLOG.md | `C:\Users\ManiMiranda\dynamicbrands-dashboard\docs\BACKLOG.md` |
 | DEV_ONLY.md | `C:\Users\ManiMiranda\dynamicbrands-backend\docs\DEV_ONLY.md` |
 
 Before editing any .md file, Claude Code must:

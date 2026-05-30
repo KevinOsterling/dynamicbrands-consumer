@@ -249,3 +249,113 @@ All outputs go to the Database via Backend API.
 | Phase 3+ | Smart glasses | Persistent AR overlay, NFT entities in field of vision |
 | Phase 3+ | VR | Virtual brand environments |
 | Future | Smartwatch, NFC, IoT | Additional Oracle event sources |
+
+---
+
+## Migrated from dashboard version — review and integrate
+
+*The following sections existed in the dashboard repo's CONSUMER_APP.md (April 2026) but were absent from this file. Review each block and merge or discard as appropriate.*
+
+---
+
+### Screen Specifications
+
+#### Dynamic Events (Home / Inbox)
+A rich event inbox — like email. Everything relevant to the consumer in one feed.
+
+**Event types (examples — not exhaustive):**
+- **Brand web option** — brand announcements, e.g. a brand giving away NFTs on their website or elsewhere
+- **DAO proposal** — new governance proposal from a brand the consumer holds
+- **Oracle event** — external event relevant to an active campaign
+- **Brand cashback** — Friday distribution confirmation and amount received
+- **User Award** — campaign condition met, award received
+- **Brand/s campaign** — new campaign launched by a brand the consumer holds
+- **User event** — anything a user (themselves or another) did that is relevant to their active campaigns
+- **New NFTs** — new NFT types or availability relevant to the consumer
+
+**Tamagotchi mechanic lives here:** Individual inbox messages can contain a tap button with a countdown timer. Consumer must open the message and tap within the time window (24–48h to open, 10 seconds to complete once opened) or lose the reward / drop a tier. The action is intentionally trivial — the cost is in forgetting, not in effort.
+
+**Future:** Consumer may be able to filter which brands' events appear in their inbox.
+
+---
+
+#### Wallet (Dynamic Brands Wallet)
+A full sovereign crypto wallet displaying ALL assets held by the consumer regardless of source.
+
+**Asset grid:**
+- One tile per brand NFT held (displays brand logo/image)
+- One tile per crypto asset held (USDC, Bitcoin, others)
+- Tapping a brand NFT tile → detail view: NFT balance, APY, cashback history, total earned, DAO participation, campaign eligibility
+- USDC tile → total USDC balance across all sources (source is irrelevant — it is the consumer's money)
+
+**Sovereignty principle:** USDC can buy more NFTs on the DB AMM, be sent to any external address, or be used entirely outside Dynamic Brands. Bitcoin and other crypto assets are equally unrestricted.
+
+**AMM access:** The AMM tab is always reachable — consumer can go buy more NFTs at any time directly from their portfolio.
+
+**APY display principle:** "Total USDC Earned" (cumulative, all-time) is the most emotionally powerful metric. Always display it prominently. A consumer who has earned $4.73 over 3 months feels fundamentally different than one who "earned $0.03 this week."
+
+---
+
+#### Map
+Geolocation view of the physical world overlaid with Dynamic Brands events.
+
+- Location pins marking active brand events, Oracle events, AR entity positions
+- Consumer navigates to pin locations to participate in location-based campaigns
+- Foundation for the Living NFT / Ostrich scenario: entities visible on map before catchable in AR
+
+---
+
+#### DAO
+Brand governance interface.
+
+- Active proposals from brands the consumer holds
+- Voting (YES/NO, weighted by NFT balance)
+- Consumer's own proposal submission
+- Contribution history — proposals submitted, votes cast, rewards earned from implemented proposals
+
+---
+
+#### AMM
+Direct access to the DB NFT AMM.
+
+- Buy brand NFTs (primary market from brands, secondary from other consumers)
+- Sell brand NFTs
+- View pricing and liquidity
+- All transactions settle through the consumer's in-app wallet address
+
+---
+
+### The App IS the Wallet (use cases)
+
+The Privy.io-powered wallet address embedded in the app is the address used for:
+- Receiving brand NFTs from QR/AR redemptions
+- Receiving USDC cashback distributions
+- Receiving campaign awards
+- Sending assets to the DB AMM for trading
+- Receiving assets back from the DB AMM
+- Any external crypto transaction the consumer initiates
+
+No separate wallet app needed.
+
+---
+
+### How the Wallet Reads Crypto Balances
+
+A crypto wallet does not store balances — it holds the private key and queries the blockchain to read what is at that address.
+
+**Phase 1 — Base assets only:**
+Consumer App reads balances via the Backend API, which queries Base through our existing paid RPC provider. Covers all Phase 1 assets: brand NFTs, USDC, DB-NFTs. The Consumer App never calls RPC directly.
+
+**Phase 2+ — Multi-chain (pending architectural decision):**
+Showing Bitcoin, Ethereum, or other non-Base assets requires a multi-chain RPC provider or portfolio API (e.g., QuickNode multi-chain, Alchemy Portfolio API). Deferred to Phase 2+.
+
+**Design principle:** The wallet UI is designed from day one to show all crypto assets. Phase 1 only populates Base assets. Non-Base tiles appear when multi-chain RPC is added. The UI north star does not change — only data availability does.
+
+---
+
+### Architectural Notes
+
+- Separate project from the Brand Intranet — different repo, deployment, and tech stack.
+- Wallet holds ALL crypto assets, not just Dynamic Brands-originated ones. Schema and API must support arbitrary asset types.
+- Map/AR/VR screens must be architecturally reserved from Phase 1. Build Phase 1 so the Ostrich is possible.
+- Consumer identity (phone/email → wallet address) must be consistent across all touchpoints.

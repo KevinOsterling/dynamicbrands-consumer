@@ -331,7 +331,8 @@ Always edit the existing file in place.*
 | DESIGN.md | `C:\Users\ManiMiranda\dynamicbrands-dashboard\docs\DESIGN.md` |
 | ORACLE.md | `C:\Users\ManiMiranda\dynamicbrands-backend\docs\ORACLE.md` |
 | BACKOFFICE.md | `C:\Users\ManiMiranda\dynamicbrands-backend\docs\BACKOFFICE.md` |
-| ADMIN_DASHBOARD.md | `C:\Users\ManiMiranda\dynamicbrands-backend\docs\ADMIN_DASHBOARD.md` |
+| ADMIN_DASHBOARD.md (source of truth) | `C:\Users\ManiMiranda\dynamicbrands-backend\docs\ADMIN_DASHBOARD.md` |
+| ADMIN_DASHBOARD.md (pointer stub) | `C:\Users\ManiMiranda\dynamicbrands-dashboard\docs\ADMIN_DASHBOARD.md` — 1-line stub, intentional |
 | BACKLOG.md | `C:\Users\ManiMiranda\dynamicbrands-dashboard\docs\BACKLOG.md` |
 | DEV_ONLY.md | `C:\Users\ManiMiranda\dynamicbrands-backend\docs\DEV_ONLY.md` |
 

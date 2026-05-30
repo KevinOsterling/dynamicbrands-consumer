@@ -1,7 +1,7 @@
-<!-- Mirror of: dynamicbrands-backend/docs/ARCHITECTURE.md — do not edit here -->
+<!-- Source of truth: dynamicbrands-backend/docs/ARCHITECTURE.md -->
 # ARCHITECTURE.md — Dynamic Brands System Blueprint
 *The soul of the system. Read this before touching any code.*
-*Last updated: May 19, 2026*
+*Last updated: 2026-05-30*
 
 ---
 
@@ -31,6 +31,7 @@ A consumer scans a QR code on a Chinese food container → a Living NFT is minte
 │  listener.ts              ← catches blockchain events               │
 │  api/routes.ts            ← original REST endpoints                 │
 │  api/notification-routes.ts ← messaging layer endpoints             │
+│  api/admin.routes.ts      ← admin panel endpoints                   │
 │  notifications/router.ts  ← persist → WS → FCM routing             │
 │  notifications/types.ts   ← EventType, Channel, EVENT_CHANNEL_MAP  │
 │  db/client.ts             ← Prisma singleton                        │
@@ -69,7 +70,8 @@ A consumer scans a QR code on a Chinese food container → a Living NFT is minte
 | `TransferSingle` | BrandNFT | Any NFT transfer (mint, send, burn) | `holders` | UPSERT sender & receiver balances | — |
 | `DistributionExecuted` | DistributionVaultV2 | Friday USDC distribution runs | `distributions` | INSERT new distribution row | `brand_cashback` fan-out → `ws+fcm` |
 | `ProposalSubmitted` | BrandDAO | Consumer submits DAO proposal | `dao_proposals` | INSERT new proposal row | — |
-| `ProposalStatusChanged` | BrandDAO | Brand manager changes proposal status | `dao_proposals` | UPDATE status field | — |
+| `ProposalFinalized` | BrandDAO | Voting ends — proposal Approved (1) or Rejected (2) | `dao_proposals` | UPDATE status + votesFor + votesAgainst | — |
+| `ProposalImplemented` | BrandDAO | Approved proposal executed on-chain | `dao_proposals` | UPDATE status = 3 (Implemented) | — |
 | `AwardClaimed` | CampaignEngine | Consumer claims campaign award | `campaign_claims` | INSERT new claim row | `campaign_award` → `ws+fcm` |
 | `DBNFTMinted` | DistributionVaultV2 | DB-NFT minted to brand after distribution | `db_nft_mints` | UPSERT by txHash | — |
 | `PlatformFeeDistributed` | DistributionVaultV2 | Platform fee routed after distribution | `platform_fees` | UPSERT by txHash | — |
@@ -139,7 +141,7 @@ SCHEDULER           BLOCKCHAIN              BACKEND                 DASHBOARD
 Every Friday
 Oracle wallet
 calls
-DistributionVault
+DistributionVaultV2
 .executeDistribution()
       │
       ▼
@@ -154,7 +156,7 @@ event fires
       - timestamp
       │
       └──────────────────→ listener.ts ──────→ distributions table
-                            handleDistribution()  INSERT row:
+                            handleDistributionExecuted()  UPSERT row:
                                                   - distributionId
                                                   - totalAmount
                                                   - perNftAmount
@@ -196,13 +198,18 @@ event                                        INSERT:
       │                                      - status: 0 (pending)
       │                                      - submittedAt
       │
-Brand manager
-marks implemented
+ProposalFinalized emitted
+(status: Approved=1 / Rejected=2,
+ votesFor, votesAgainst)
       │
       ▼
-ProposalStatusChanged ────────────────────→ dao_proposals table
-event                                        UPDATE:
-                                             - status: new value
+dao_proposals updated
+      │
+ProposalImplemented emitted
+(brand manager executes)
+      │
+      ▼
+dao_proposals status = 3
                                                     │
                                                     ▼
                                          GET /brands/1/proposals
@@ -273,6 +280,7 @@ Fan-out path (DistributionExecuted, brand broadcasts):
 | `vault_threshold` | `ws+fcm` | Admin trip wire |
 | `dbnft_distribution` | `ws` | Admin DB-NFT event |
 | `audit_requirement_brand` | `fcm` | Admin audit notification (brand-facing) |
+| `welcome` | `ws+fcm` | Platform welcome event — brand-facing (platform → brand manager) |
 | `c2c_message` | `ws+fcm` | Reserved — C2C not yet implemented |
 
 ---
@@ -289,13 +297,13 @@ Fan-out path (DistributionExecuted, brand broadcasts):
 - **Populated by:** `DistributionExecuted` event
 - **Current rows:** 0 (no distributions run since backend went live)
 - **Key fields:** `distributionId`, `totalAmount`, `perNftAmount`, `recipientCount`, `executedAt`
-- **Dashboard consumer:** Cashbacks page ← NOT YET CONNECTED
+- **Dashboard consumer:** Cashbacks page ✅ CONNECTED
 
 ### `dao_proposals` — WHAT consumers are voting on
-- **Populated by:** `ProposalSubmitted` + `ProposalStatusChanged` events
+- **Populated by:** `ProposalSubmitted`, `ProposalFinalized`, `ProposalImplemented` events
 - **Current rows:** 0 (no proposals submitted since backend went live)
 - **Key fields:** `proposalId`, `proposer`, `description`, `status`, `votesFor`, `votesAgainst`
-- **Dashboard consumer:** Decisions page ← NOT YET CONNECTED
+- **Dashboard consumer:** Decisions page ✅ CONNECTED
 
 ### `campaign_claims` — WHO claimed WHAT campaign award
 - **Populated by:** `AwardClaimed` event
@@ -424,19 +432,31 @@ On backend restart:
 
 ---
 
+## Cron Jobs
+
+Managed by `node-cron` in `src/cron/`.
+
+| Schedule | Job | Description |
+|----------|-----|-------------|
+| Every Friday 00:00 UTC | Distribution cron | Calls `executeDistribution()` on DistributionVaultV2 for all brands where `autoDistribute = true` in the `brands` table |
+| Daily 00:00 UTC | Event expiry | Marks expired `dynamic_events` rows as read (cleanup pass) |
+
+---
+
 ## Contract Addresses — Base Sepolia
 
 ```
-Registry:          0xb0D62f9a32335826Bc111a1722DEBc2d3c53e80f
-BrandNFT:          0xc06eB97a6D47eB4bE29448a126096B8dF7858e74
-CampaignEngine:    0x1F98680ca5Ff660413709AB67c6fAb05acf697d7
-BrandDAO:          0xcd31F908c7c6addF40f0f75E5AcC50B1568aF985
+Registry:            0xb0D62f9a32335826Bc111a1722DEBc2d3c53e80f
+BrandNFT:            0xc06eB97a6D47eB4bE29448a126096B8dF7858e74
+CampaignEngine:      0x1F98680ca5Ff660413709AB67c6fAb05acf697d7
+BrandDAO:            0xcd31F908c7c6addF40f0f75E5AcC50B1568aF985
 DistributionVaultV2: 0xedfb20429db228ceeaa573ab5560ec346cb02a2a
-MockUSDC:          0xf835022e1eFa91B4148890676950F7b0dc0c65B9
-Oracle/Scheduler:  0xa765a9D996636F608932b29a2889329fC30C3e1a
-Deployment block:  38799821
-Chain ID:          84532 (Base Sepolia)
-RPC:               https://base-sepolia.gateway.tenderly.co
+DBNFTToken:          0xd07a3579134fbac5d614cb813e73b5105deb20ae
+MockUSDC:            0xf835022e1eFa91B4148890676950F7b0dc0c65B9
+Oracle/Scheduler:    0xa765a9D996636F608932b29a2889329fC30C3e1a
+Deployment block:    38799821
+Chain ID:            84532 (Base Sepolia)
+RPC:                 https://base-sepolia.gateway.tenderly.co
 ```
 
 ---
@@ -469,7 +489,7 @@ RPC:               https://base-sepolia.gateway.tenderly.co
 
 1. All dashboard pages wired to backend API (no more wagmi direct reads, no localStorage)
 2. Upgradeable proxy pattern on all 5 contracts
-3. Real USDC (not MockUSDC) in DistributionVault
+3. Real USDC (not MockUSDC) in DistributionVaultV2
 4. Privy paymaster for consumer gas sponsorship
 5. Real QR codes on real China Wok packaging
 6. Consumer app (separate mobile-first project)
@@ -480,7 +500,7 @@ RPC:               https://base-sepolia.gateway.tenderly.co
 
 ```
 🔵 BLUE  = Decisions  = dao_proposals table     = BrandDAO contract
-🔴 RED   = Cashbacks  = distributions table     = DistributionVault contract
+🔴 RED   = Cashbacks  = distributions table     = DistributionVaultV2 contract
 🟢 GREEN = Purchases  = holders table           = BrandNFT contract
 ⚪ CENTER = Campaigns  = campaign_claims table   = CampaignEngine contract
 ```

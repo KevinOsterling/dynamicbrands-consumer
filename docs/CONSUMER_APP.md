@@ -252,7 +252,7 @@ All outputs go to the Database via Backend API.
 
 ---
 
-## Migrated from dashboard version — review and integrate
+## Screen Specifications & Wallet Architecture
 
 *The following sections existed in the dashboard repo's CONSUMER_APP.md (April 2026) but were absent from this file. Review each block and merge or discard as appropriate.*
 

@@ -111,7 +111,7 @@ External servers whose data is treated as valid events for Dynamic Brands Campai
 
 #### Consumer App
 The Consumer App is a **full sovereign crypto wallet** deeply integrated with the Dynamic Brands loyalty ecosystem. Mobile-first web app. Future Phase 3+: smart glasses and VR interfaces.
-*See `docs/CONSUMER_APP.md` for full spec.*
+*See `dynamicbrands-consumer/docs/CONSUMER_APP.md` for full spec.*
 
 **The app IS the wallet.** The Privy.io-powered wallet address in the app is the same address used for receiving NFTs, cashbacks, awards, AMM trades, and any external crypto transaction. No separate wallet app needed.
 
@@ -140,7 +140,7 @@ Web application for brand managers. Currently the active build target.
 
 **OUTPUT to Database → Blockchain:** All configuration data flows first to the Database, which then propagates necessary instructions to the relevant smart contracts on the blockchain.
 
-**Current build state:** See `CLAUDE.md` (Dashboard) for page-by-page status.
+**Current build state:** See `dynamicbrands-dashboard/CLAUDE.md` for page-by-page status.
 
 ---
 
@@ -162,7 +162,7 @@ The central hub of the entire platform. All reads and writes across every compon
 - Business intelligence per brand (campaign intelligence, consumer scoring, real-time decisions)
 - Consumer wallet asset balances (Phase 1: Base assets only via paid RPC; Phase 2+: multi-chain via portfolio API)
 
-**Current state:** Node.js/TypeScript, Fastify, Prisma, PostgreSQL (Supabase). 5 tables live. viem listener active.
+**Current state:** Node.js/TypeScript, Fastify, Prisma, PostgreSQL (Supabase). 14 models live. viem listener active.
 
 #### Back Office (AI Agents)
 AI agents acting as Dynamic Brands' internal employees. Connected bidirectionally to the Database only. Uses the Internet as a resource.
@@ -186,7 +186,7 @@ Dynamic Brands' own custodial Automated Market Maker. Primary and secondary mark
 ---
 
 ### BLOCKCHAIN
-*See `docs/CONTRACTS.md` for ABIs, addresses, and function-level detail.*
+*See `dynamicbrands/docs/CONTRACTS.md` for ABIs, addresses, and function-level detail.*
 *See `docs/BLOCKCHAIN.md` for wagmi/viem integration patterns.*
 
 All contracts deployed on **Base** (mainnet) / **Base Sepolia** (testnet, current). Chain ID: 84532.
@@ -195,8 +195,8 @@ All contracts deployed on **Base** (mainnet) / **Base Sepolia** (testnet, curren
 ERC-1155. Mints and tracks consumer NFT ownership per brand.
 **Current address (China Wok, Base Sepolia):** `0xc06eB97a6D47eB4bE29448a126096B8dF7858e74`
 
-#### DistributionVault + DB NFT (one per brand) ⚠️ REQUIRES REDEPLOYMENT
-Currently deployed as `DistributionVault` only. Must be redeployed before any real cashback distributions.
+#### DistributionVaultV2 (one per brand)
+Holds brand USDC deposits and executes weekly cashback distributions.
 
 **What it does:**
 1. Holds USDC deposited by the Brand
@@ -208,8 +208,8 @@ Currently deployed as `DistributionVault` only. Must be redeployed before any re
 
 **The promotion mechanic is on-chain:** Contract address is publishable so anyone — including AI agents — can verify brands are genuinely rewarded for distributing cashbacks.
 
-**Current address (China Wok, Base Sepolia):** `0xc717Ba63649f3a139f619dBd44fe78d07beCCC32` ← needs redeployment
-**Status:** Phase 1 priority — redeployment required before first real distribution.
+**Current address (China Wok, Base Sepolia):** `0xedfb20429db228ceeaa573ab5560ec346cb02a2a`
+**Status:** ✅ Live on Base Sepolia.
 
 #### DynamicBrandsRegistry (shared across all brands)
 Protocol-level contract. Shared identity and accounting layer.
@@ -232,8 +232,10 @@ Governance contract. Records proposals and votes on-chain.
 On-chain composable rules engine. Evaluates IF/THEN campaign conditions and executes awards.
 **Current address (Base Sepolia):** `0x1F98680ca5Ff660413709AB67c6fAb05acf697d7`
 
-#### DB-NFT (Dynamic Brands NFT)
-Dynamic Brands' own platform NFT. Hard cap: 21,000,000. Genesis mint: 7,000,000 to Dynamic Brands treasury at contract deployment. Ongoing: 1 DB-NFT per USDC distributed by any brand. DB-NFT holders receive 5% platform fee yield in USDC.
+#### DBNFTToken (Dynamic Brands NFT)
+Dynamic Brands' own platform NFT. ERC-1155, 6 decimals, TOKEN_ID=1. Hard cap: 21,000,000 DB-NFTs (21 trillion micro-units). Genesis mint: 7,000,000 to Dynamic Brands treasury at deployment. Ongoing: 1 DB-NFT per USDC distributed by any brand. DB-NFT holders receive 5% platform fee yield in USDC.
+**Current address (Base Sepolia):** `0xd07a3579134fbac5d614cb813e73b5105deb20ae`
+**Status:** ✅ Live on Base Sepolia. DistributionVaultV2 is authorized to mint.
 
 #### Supporting
 - **MockUSDC (testnet only):** `0xf835022e1eFa91B4148890676950F7b0dc0c65B9`
@@ -292,12 +294,12 @@ Dynamic Brands' own platform NFT. Hard cap: 21,000,000. Genesis mint: 7,000,000 
 | File | Read when… |
 |------|-----------|
 | `docs/ARCHITECTURE.md` | Working on backend data flows, DB schema, API endpoints, event mappings |
-| `dynamicbrands/docs/CONTRACTS.md` *(external repo)* | Working on smart contracts, ABIs, addresses, function signatures |
+| `dynamicbrands/docs/CONTRACTS.md` | Contracts reference (external repo) — ABIs, addresses, function signatures |
 | `docs/BLOCKCHAIN.md` | Writing wagmi/viem code, transaction flows, wallet connection, critical rules |
 | `docs/FRONTEND.md` | Working on any Next.js page, component, routing, i18n, or styling |
 | `docs/DESIGN.md` | Working on UI components, colors, Three Circles visual system |
 | `docs/BACKEND.md` | Working on backend service runtime, commands, environment config |
-| `docs/CONSUMER_APP.md` | Working on or designing the consumer-facing mobile app |
+| `dynamicbrands-consumer/docs/CONSUMER_APP.md` | Working on or designing the consumer-facing mobile app |
 | `docs/ORACLE.md` | Working on Oracle event pipeline or third-party API integrations |
 | `docs/AMM.md` | Working on the DB NFT Automated Market Maker |
 | `docs/BACKOFFICE.md` | Working on or designing the AI Agents back office layer |
@@ -312,7 +314,7 @@ before continuing. No reasoning from memory or assumptions about project
 internals.
 
 Reference map:
-- Smart contract behavior → ask for CONTRACTS.md
+- Smart contract behavior → ask for dynamicbrands/docs/CONTRACTS.md (external repo)
 - Blockchain/wagmi/viem patterns → ask for BLOCKCHAIN.md
 - Backend/listener/API → ask for BACKEND.md
 - Design system/UI → ask for DESIGN.md

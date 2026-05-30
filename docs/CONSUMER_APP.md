@@ -1,6 +1,6 @@
 <!-- Source of truth: dynamicbrands-consumer/docs/CONSUMER_APP.md -->
 # CONSUMER_APP.md — Dynamic Brands Consumer App
-*Last updated: May 2026*
+*Last updated: 2026-05-30*
 *Status: Phase 1 in progress — Events inbox complete, bottom nav built, stub screens added.*
 
 ---
@@ -12,6 +12,18 @@ The Dynamic Brands Consumer App is a mobile-first web app and full sovereign cry
 No app store download required in Phase 1. Future Phase 3+: smart glasses and VR interfaces.
 
 **Key principle:** The loyalty experience is the entry point. The wallet is the asset.
+
+---
+
+## Consumer Onboarding Flow
+
+| Step | Event | What Happens |
+|------|-------|--------------|
+| 1 | Discovery | Consumer encounters QR code (packaging, VISA voucher, landing page, social, AR character) |
+| 2 | Scan | QR redirect opens Consumer App in browser — no download required |
+| 3 | Auth | Consumer authenticates via phone or email → Privy.io creates custodial wallet |
+| 4 | Mint | App calls `BrandNFT.redeemQR()` → NFT minted on-chain to consumer's wallet |
+| 5 | Inbox | Consumer enters Dynamic Events inbox — first `nft_minted` notification received |
 
 ---
 
@@ -114,6 +126,7 @@ Manages all three channels in one hook:
 | vault_threshold | ⚠️ | red | ws+fcm |
 | dbnft_distribution | 🪙 | teal | ws |
 | audit_requirement_brand | 📋 | red | fcm |
+| welcome | 🎉 | emerald | ws+fcm | Brand-facing — platform → brand manager |
 | c2c_message | 💬 | zinc | ws+fcm |
 
 ---
@@ -158,9 +171,10 @@ src/
   - fetchMissed() on reconnect catches events from the disconnect gap ✅
   - POST `/admin/messages` → event appears in inbox instantly, no page refresh ✅
 - Date formatter hydration mismatch fixed (useEffect + useState, empty string SSR fallback) ✅
-- DEV_WALLET hardcoded (`0xa765...`) — replace with Privy wallet when integrated ⬜
+- DEV_WALLET=`0xa765a9D996636F608932b29a2889329fC30C3e1a` hardcoded in `EventFeed.tsx` — replace with Privy wallet when integrated ⬜
 - Privy.io wallet not yet integrated ⬜
 - FCM service worker not yet registered ⬜
+- All UI text is Spanish (es-PE) — hardcoded, no i18n routing yet ⬜
 - Map screen not yet in nav — planned for Phase 2 ⬜
 
 ---
@@ -178,33 +192,53 @@ src/
 ## Inputs (what the app receives)
 All inputs arrive from the Database via Backend API. The Consumer App never reads directly from the blockchain.
 
-| Input | Endpoint |
-|-------|----------|
-| Dynamic Events feed | WS `/ws?wallet=` or GET `/consumers/:wallet/events` |
-| FCM push (app closed) | Firebase → device |
-| NFT/wallet balances | Planned — GET `/consumers/:wallet/assets` |
-| Map/AR data | Planned |
-| AMM market data | Planned |
+| Input | Source | Status |
+|-------|--------|--------|
+| Dynamic Events feed | WS `/ws?wallet=` or GET `/consumers/:wallet/events` | ✅ Live |
+| FCM push (app closed) | Firebase → device | ⬜ Service worker pending |
+| NFT/wallet balances (Phase 1: Base assets only) | Planned — GET `/consumers/:wallet/assets` | ⬜ Not yet built |
+| Multi-chain asset display (Phase 2+: Bitcoin, ETH, others) | Multi-chain portfolio API — provider TBD | ⬜ Future |
+| Map/AR geolocation data | Oracle API → Backend | ⬜ Future |
+| AMM market listings | Planned | ⬜ Phase 2 |
 
 ---
 
 ## Outputs (what the app sends)
 All outputs go to the Database via Backend API.
 
-| Output | Endpoint |
-|--------|----------|
-| FCM device token registration | POST `/consumers/:wallet/device-token` |
-| Mark event read | PATCH `/consumers/:wallet/events/:id/read` |
-| DAO votes | Planned |
-| Tamagotchi tap | Planned |
-| QR scan events | Planned |
+| Output | Endpoint | Status |
+|--------|----------|--------|
+| FCM device token registration | POST `/consumers/:wallet/device-token` | ✅ Live |
+| Mark event read | PATCH `/consumers/:wallet/events/:id/read` | ✅ Live |
+| Mark all events read | PATCH `/consumers/:wallet/events/read-all` | ✅ Live |
+| DAO votes and proposals | Planned | ⬜ Future |
+| Tamagotchi tap | Planned — POST `/consumers/:wallet/tamagotchi/tap` | ⬜ Future |
+| QR scan events (NFT redemption) | On-chain via `BrandNFT.redeemQR()` → Backend listener catches it | ⬜ Future |
+| AMM trade instructions | Planned | ⬜ Phase 2 |
 
 ---
 
 ## Wallet Technology: Privy.io
-- Phase 1: Custodial — Privy.io manages keys. Consumer authenticates with phone or email.
-- Always exportable to full self-custody from day one.
-- One phone/email = one wallet = all brand NFTs in one place.
+
+**Phase 1 — Custodial (pending integration):**
+- Privy.io manages private keys on behalf of the consumer
+- Consumer authenticates with phone number or email — no seed phrase required
+- Keys are always exportable to full self-custody from day one — no platform lock-in
+- One phone/email = one wallet = all brand NFTs in one place
+
+**Progressive custody path:**
+- Day 1: Privy.io custodial (zero friction for new crypto users)
+- Day N: Consumer exports keys to any self-custody wallet (MetaMask, Ledger, etc.)
+- The wallet address never changes — all assets remain in place
+
+**Phase 1 assets (Base chain only):**
+- Brand NFTs (ERC-1155)
+- USDC cashbacks
+- DB-NFTs
+
+**Phase 2+ assets (multi-chain via portfolio API — provider TBD):**
+- Bitcoin, ETH, and other chains displayed in-app
+- External wallets linkable for read-only balance display
 
 ---
 

@@ -19,6 +19,7 @@ export type EventType =
   | 'vault_threshold'
   | 'dbnft_distribution'
   | 'audit_requirement_brand'
+  | 'welcome'
   | 'c2c_message'
 
 export type SenderType = 'blockchain' | 'brand' | 'platform' | 'consumer'

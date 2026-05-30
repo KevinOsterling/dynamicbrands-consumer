@@ -40,7 +40,8 @@ npm run start  # production server
 | Dynamic Events inbox | ✅ complete |
 | PWA manifest | ✅ complete |
 | Bottom nav | ✅ complete |
-| Wallet / Map / DAO / AMM screens | ⬜ stub only |
+| Wallet / DAO / AMM screens | ⬜ stub only |
+| Map screen | ⬜ Phase 2 — not in current nav |
 | Privy.io wallet integration | ⬜ pending |
 
 ## Session Setup

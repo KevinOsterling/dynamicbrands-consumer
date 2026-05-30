@@ -1,6 +1,6 @@
 <!-- Mirror of: dynamicbrands-backend/docs/SYSTEM.md — do not edit here -->
 # SYSTEM.md — Dynamic Brands Master Architecture
-*Last updated: April 2026 | Read this first at the start of every session.*
+*Last updated: 2026-05-30 | Read this first at the start of every session.*
 *For implementation detail, follow the links in each component section.*
 
 ---
@@ -115,7 +115,7 @@ The Consumer App is a **full sovereign crypto wallet** deeply integrated with th
 
 **The app IS the wallet.** The Privy.io-powered wallet address in the app is the same address used for receiving NFTs, cashbacks, awards, AMM trades, and any external crypto transaction. No separate wallet app needed.
 
-**Navigation tabs:** Wallet, Map, DAO, AMM. Home screen: Dynamic Events inbox.
+**Navigation tabs:** Events (home), Wallet, DAO, AMM. Map is Phase 2 — not in Phase 1.
 
 **Wallet holds ALL assets** — brand NFTs, DB-NFTs, USDC, Bitcoin, and any other crypto. Assets are sovereign: no platform restrictions on how the consumer uses their money.
 
@@ -128,7 +128,7 @@ The Consumer App is a **full sovereign crypto wallet** deeply integrated with th
 
 **OUTPUT to Database:** All consumer-generated events evaluable as campaign conditions — QR scans, Tamagotchi taps, DAO votes and proposals, AR interactions, location presence, purchases, user events, AMM trade instructions, external wallet transfers.
 
-**Status:** Planned. Not yet built.
+**Status:** ⚠️ Phase 1 in progress — Events feed, Wallet, DAO tabs live. Map is Phase 2.
 
 #### Brand Intranet (Dashboard)
 Web application for brand managers. Currently the active build target.
@@ -226,7 +226,7 @@ Protocol-level contract. Shared identity and accounting layer.
 
 #### BrandDAO (one per brand)
 Governance contract. Records proposals and votes on-chain.
-**Current address (China Wok, Base Sepolia):** `0xcd31F908c7c6addDF40f0f75E5AcC50B1568aF985`
+**Current address (China Wok, Base Sepolia):** `0xcd31F908c7c6addF40f0f75E5AcC50B1568aF985`
 
 #### CampaignEngine (shared across all brands)
 On-chain composable rules engine. Evaluates IF/THEN campaign conditions and executes awards.
@@ -277,10 +277,10 @@ Dynamic Brands' own platform NFT. Hard cap: 21,000,000. Genesis mint: 7,000,000 
 | DynamicBrandsRegistry | ⚠️ Live but needs DB-NFT counter update |
 | BrandDAO contract | ✅ Live on Base Sepolia |
 | CampaignEngine contract | ✅ Live on Base Sepolia |
-| DB-NFT contract logic | 🔲 Not yet built — Phase 1 priority |
-| Brand Intranet (Dashboard) | ✅ 7 pages live, connected to Base Sepolia |
+| DBNFTToken contract | ✅ Live on Base Sepolia — `0xd07a3579134fbac5d614cb813e73b5105deb20ae` |
+| Brand Intranet (Dashboard) | ✅ 7 pages + admin panel live, connected to Base Sepolia |
 | Backend service | ✅ Fastify + Prisma + Supabase live, viem listener active |
-| Consumer App | 🔲 Not yet built |
+| Consumer App | ⚠️ Phase 1 in progress — Events feed, Wallet, DAO tabs live |
 | DB NFT AMM | 🔲 Not yet built — Phase 2+ |
 | Back Office AI Agents | 🔲 Not yet built — Future |
 | Oracle API integrations | 🔲 Not yet built — architecture reserved |
@@ -292,7 +292,7 @@ Dynamic Brands' own platform NFT. Hard cap: 21,000,000. Genesis mint: 7,000,000 
 | File | Read when… |
 |------|-----------|
 | `docs/ARCHITECTURE.md` | Working on backend data flows, DB schema, API endpoints, event mappings |
-| `docs/CONTRACTS.md` | Working on smart contracts, ABIs, addresses, function signatures |
+| `dynamicbrands/docs/CONTRACTS.md` *(external repo)* | Working on smart contracts, ABIs, addresses, function signatures |
 | `docs/BLOCKCHAIN.md` | Writing wagmi/viem code, transaction flows, wallet connection, critical rules |
 | `docs/FRONTEND.md` | Working on any Next.js page, component, routing, i18n, or styling |
 | `docs/DESIGN.md` | Working on UI components, colors, Three Circles visual system |

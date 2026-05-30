@@ -11,7 +11,7 @@ const ICONS: Record<EventType, string> = {
   nft_on_amm: '📈', audit_requirement_consumer: '📋',
   platform_new_brand_nft: '🆕', vault_threshold: '⚠️',
   dbnft_distribution: '🪙', audit_requirement_brand: '📋',
-  c2c_message: '💬'
+  welcome: '🎉', c2c_message: '💬'
 }
 
 const BORDER: Record<EventType, string> = {
@@ -35,6 +35,7 @@ const BORDER: Record<EventType, string> = {
   vault_threshold: 'border-red-600',
   dbnft_distribution: 'border-teal-400',
   audit_requirement_brand: 'border-red-500',
+  welcome: 'border-emerald-400',
   c2c_message: 'border-zinc-400'
 }
 

@@ -173,15 +173,15 @@ AI agents acting as Dynamic Brands' internal employees. Connected bidirectionall
 **Status:** Future. Database must be ready to serve and receive agent calls without retrofit.
 
 #### DB NFT AMM
-Dynamic Brands' own custodial Automated Market Maker. Primary and secondary market for all brand NFTs including DB-NFTs.
-*See `docs/AMM.md` for full spec.*
+Dynamic Brands' on-chain NFT Marketplace. Fixed-price primary and secondary market for all brand NFTs including DB-NFTs.
+*See `dynamicbrands/docs/AMM.md` for full spec.*
 
-**Custodial model:** Centralized server — not a blockchain smart contract. NFTs always reside on-chain. The AMM custodies private keys of DB-controlled wallet addresses. Users transfer assets to AMM custodial addresses to trade; AMM executes on-chain settlement via Database → Backend → blockchain path.
+**Architecture:** On-chain upgradeable smart contract (TransparentUpgradeableProxy). Sellers list NFTs at a fixed USDC price; NFT stays in seller's wallet until `buyItem()` executes an atomic swap: USDC → seller, NFT → buyer, 2.5% fee to Dynamic Brands treasury. No custody of assets by Dynamic Brands.
 
-**Consumer App IS the consumer's wallet:** The Privy.io wallet address in the app is used for all AMM inbound and outbound transfers.
+**Proxy address is permanent:** Consumers approve the proxy address once via `setApprovalForAll`. The address never changes across logic upgrades — no consumer re-approval needed when V2 or V3 is deployed.
 
-**Connection:** Database ↔ DB NFT AMM only. No direct blockchain connection.
-**Status:** Future. Phase 2+.
+**Connection:** Backend listener watches proxy address for `ListingCreated`, `ListingCancelled`, `PriceUpdated`, `TradeExecuted` events → syncs to `amm_listings` and `amm_trades` tables.
+**Status:** Design complete (`NFTMarketplace.sol`, `NFTMarketplaceProxy.sol`, `deploy_marketplace.ts`). Not yet deployed. Phase 2.
 
 ---
 
@@ -237,6 +237,11 @@ Dynamic Brands' own platform NFT. ERC-1155, 6 decimals, TOKEN_ID=1. Hard cap: 21
 **Current address (Base Sepolia):** `0xd07a3579134fbac5d614cb813e73b5105deb20ae`
 **Status:** ✅ Live on Base Sepolia. DistributionVaultV2 is authorized to mint.
 
+#### NFTMarketplace (shared across all brands)
+Fixed-price on-chain marketplace for ERC-1155 brand NFTs. TransparentUpgradeableProxy — proxy address is permanent and never changes across logic upgrades. Sellers list NFTs; buyers execute atomic USDC↔NFT swaps. 2.5% platform fee to Dynamic Brands treasury.
+**Source:** `contracts/NFTMarketplace.sol` + `contracts/NFTMarketplaceProxy.sol`. Deploy script: `scripts/deploy_marketplace.ts`.
+**Status:** Design document — not yet deployed. Deploy after Privy.io integration is live.
+
 #### Supporting
 - **MockUSDC (testnet only):** `0xf835022e1eFa91B4148890676950F7b0dc0c65B9`
 - **Deployer/Oracle/Scheduler wallet:** `0xa765a9D996636F608932b29a2889329fC30C3e1a`
@@ -283,7 +288,8 @@ Dynamic Brands' own platform NFT. ERC-1155, 6 decimals, TOKEN_ID=1. Hard cap: 21
 | Brand Intranet (Dashboard) | ✅ 7 pages + admin panel live, connected to Base Sepolia |
 | Backend service | ✅ Fastify + Prisma + Supabase live, viem listener active |
 | Consumer App | ⚠️ Phase 1 in progress — Events feed, Wallet, DAO tabs live |
-| DB NFT AMM | 🔲 Not yet built — Phase 2+ |
+| NFTMarketplace contract | ⬜ Design complete — not yet deployed (Phase 2) |
+| DB NFT AMM (full) | 🔲 Phase 2 — deploy after Privy integration |
 | Back Office AI Agents | 🔲 Not yet built — Future |
 | Oracle API integrations | 🔲 Not yet built — architecture reserved |
 
@@ -301,7 +307,8 @@ Dynamic Brands' own platform NFT. ERC-1155, 6 decimals, TOKEN_ID=1. Hard cap: 21
 | `docs/BACKEND.md` | Working on backend service runtime, commands, environment config |
 | `dynamicbrands-consumer/docs/CONSUMER_APP.md` | Working on or designing the consumer-facing mobile app |
 | `docs/ORACLE.md` | Working on Oracle event pipeline or third-party API integrations |
-| `docs/AMM.md` | Working on the DB NFT Automated Market Maker |
+| `dynamicbrands/docs/AMM.md` | Working on the DB NFT Automated Market Maker — proxy architecture, events, schema |
+| `C:\Users\ManiMiranda\dynamicbrands\contracts\` | Reading or editing Solidity source files |
 | `docs/BACKOFFICE.md` | Working on or designing the AI Agents back office layer |
 
 ## Claude Session Rules (C-3PO Behavior Protocol)

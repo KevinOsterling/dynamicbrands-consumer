@@ -327,7 +327,7 @@ Always edit the existing file in place.*
 | AMM.md | `C:\Users\ManiMiranda\dynamicbrands\docs\AMM.md` |
 | CONSUMER_APP.md | `C:\Users\ManiMiranda\dynamicbrands-consumer\docs\CONSUMER_APP.md` |
 | CONTRACTS.md | `C:\Users\ManiMiranda\dynamicbrands\docs\CONTRACTS.md` |
-| BLOCKCHAIN.md | `C:\Users\ManiMiranda\dynamicbrands-backend\docs\BLOCKCHAIN.md` |
+| BLOCKCHAIN.md | `C:\Users\ManiMiranda\dynamicbrands-dashboard\docs\BLOCKCHAIN.md` |
 | DESIGN.md | `C:\Users\ManiMiranda\dynamicbrands-dashboard\docs\DESIGN.md` |
 | ORACLE.md | `C:\Users\ManiMiranda\dynamicbrands-backend\docs\ORACLE.md` |
 | BACKOFFICE.md | `C:\Users\ManiMiranda\dynamicbrands-backend\docs\BACKOFFICE.md` |
@@ -335,6 +335,9 @@ Always edit the existing file in place.*
 | ADMIN_DASHBOARD.md (pointer stub) | `C:\Users\ManiMiranda\dynamicbrands-dashboard\docs\ADMIN_DASHBOARD.md` — 1-line stub, intentional |
 | BACKLOG.md | `C:\Users\ManiMiranda\dynamicbrands-dashboard\docs\BACKLOG.md` |
 | DEV_ONLY.md | `C:\Users\ManiMiranda\dynamicbrands-backend\docs\DEV_ONLY.md` |
+| NFTMarketplace.sol | `C:\Users\ManiMiranda\dynamicbrands\contracts\contracts\NFTMarketplace.sol` |
+| NFTMarketplaceProxy.sol | `C:\Users\ManiMiranda\dynamicbrands\contracts\contracts\NFTMarketplaceProxy.sol` |
+| deploy_marketplace.ts | `C:\Users\ManiMiranda\dynamicbrands\scripts\deploy_marketplace.ts` |
 
 Before editing any .md file, Claude Code must:
 1. Confirm the file exists at the exact path shown above using the terminal

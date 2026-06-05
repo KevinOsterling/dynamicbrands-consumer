@@ -33,7 +33,7 @@ No app store download required in Phase 1. Future Phase 3+: smart glasses and VR
 
 ## Stack
 - Framework: Next.js 16, React 19, Tailwind v4, TypeScript
-- Wallet: Privy.io (Phase 1: custodial, always exportable) — pending integration
+- Wallet: Privy.io (Phase 1: custodial, always exportable) — ✅ integrated
 - Port: 3000 (default)
 - Backend API: `http://localhost:3002` (dev) / env var `NEXT_PUBLIC_BACKEND_URL`
 
@@ -135,17 +135,22 @@ Manages all three channels in one hook:
 ```
 src/
   app/
-    layout.tsx            ← Root layout — metadata, fonts, BottomNav
+    layout.tsx            ← Root layout — PrivyClientProvider, AuthGate, BottomNav
     page.tsx              ← Server component — renders EventFeed
     manifest.ts           ← PWA manifest (Next.js 16 MetadataRoute.Manifest)
     wallet/page.tsx       ← Stub — "Coming soon"
     dao/page.tsx          ← Stub — "Coming soon"
     amm/page.tsx          ← Stub — "Coming soon"
   components/
+    PrivyClientProvider.tsx ← 'use client' — wraps PrivyProvider with app config
+    AuthGate.tsx          ← 'use client' — auth wall: spinner → LoginScreen → app
+    LoginScreen.tsx       ← 'use client' — branded email OTP login (es-PE)
     BottomNav.tsx         ← 'use client' — 4-tab fixed bottom nav, active tab blue
     EventFeed.tsx         ← 'use client' — connects to useEventStream, renders live events
     EventCard.tsx         ← Individual event card with Tamagotchi timer
     ConnectionBadge.tsx   ← connecting / live / polling / offline indicator
+  context/
+    WalletContext.tsx     ← walletAddress string | null — available to all screens
   hooks/
     useEventStream.ts     ← WS + Pull fallback + reconnect, wired to EventFeed
   lib/
@@ -155,7 +160,7 @@ src/
 
 ---
 
-## Current State (May 2026)
+## Current State (June 2026)
 - Next.js 16 / React 19 / Tailwind v4 app running on port 3000 ✅
 - PWA manifest configured (`src/app/manifest.ts`) — name "Dynamic Brands", dark zinc theme ✅
 - Bottom nav built — 4 tabs (Events / Wallet / DAO / AMM), active tab blue, fixed bottom ✅
@@ -171,8 +176,12 @@ src/
   - fetchMissed() on reconnect catches events from the disconnect gap ✅
   - POST `/admin/messages` → event appears in inbox instantly, no page refresh ✅
 - Date formatter hydration mismatch fixed (useEffect + useState, empty string SSR fallback) ✅
-- DEV_WALLET=`0xa765a9D996636F608932b29a2889329fC30C3e1a` hardcoded in `EventFeed.tsx` — replace with Privy wallet when integrated ⬜
-- Privy.io wallet not yet integrated ⬜
+- **Privy.io email login integrated — real wallet address replaces DEV_WALLET** ✅
+  - Email OTP login with branded LoginScreen (es-PE, dark zinc) ✅
+  - Embedded Ethereum wallet created on login (`users-without-wallets`) ✅
+  - WalletContext provides address to all screens ✅
+  - AuthGate: spinner → LoginScreen → app (never shows app without auth) ✅
+  - Logout button (exit icon) in Events screen header ✅
 - FCM service worker not yet registered ⬜
 - All UI text is Spanish (es-PE) — hardcoded, no i18n routing yet ⬜
 - Map screen not yet in nav — planned for Phase 2 ⬜
@@ -180,12 +189,11 @@ src/
 ---
 
 ## Next Steps
-1. Integrate Privy.io — replace hardcoded DEV_WALLET with real wallet address
-2. Register FCM service worker for push notifications when app is closed
-3. Build Wallet screen content (NFT balances, USDC balance, transaction history)
-4. Build DAO screen content (proposal list, voting)
-5. Build AMM screen content (NFT market listings)
-6. Add Map tab to nav when Map/AR work begins
+1. Register FCM service worker for push notifications when app is closed
+2. Build Wallet screen content (NFT balances, USDC balance, transaction history)
+3. Build DAO screen content (proposal list, voting)
+4. Build AMM screen content (NFT market listings)
+5. Add Map tab to nav when Map/AR work begins
 
 ---
 

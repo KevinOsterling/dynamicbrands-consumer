@@ -1,13 +1,14 @@
 'use client'
+import { usePrivy } from '@privy-io/react-auth'
 import { useEventStream } from '@/hooks/useEventStream'
+import { useWalletContext } from '@/context/WalletContext'
 import { EventCard } from './EventCard'
 import { ConnectionBadge } from './ConnectionBadge'
 
-// DEV: hardcoded wallet — replace with Privy wallet address when integrated
-const DEV_WALLET = '0xa765a9D996636F608932b29a2889329fC30C3e1a'
-
 export function EventFeed() {
-  const { events, connectionState, markRead } = useEventStream(DEV_WALLET)
+  const { logout } = usePrivy()
+  const { walletAddress } = useWalletContext()
+  const { events, connectionState, markRead } = useEventStream(walletAddress)
   const unread = events.filter(e => !e.readAt).length
 
   return (
@@ -27,10 +28,38 @@ export function EventFeed() {
               Tu inbox de marca
             </p>
           </div>
-          <ConnectionBadge state={connectionState} />
+          <div className="flex items-center gap-3">
+            <ConnectionBadge state={connectionState} />
+            <button
+              onClick={() => logout()}
+              title="Cerrar sesión"
+              className="text-zinc-400 hover:text-zinc-200 transition-colors p-1"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+            </button>
+          </div>
         </div>
 
-        {events.length === 0 ? (
+        {!walletAddress ? (
+          <div className="text-center py-16 text-zinc-400 dark:text-zinc-500">
+            <div className="w-8 h-8 rounded-full border-4 border-zinc-700 border-t-blue-500 animate-spin mx-auto mb-3" />
+            <p className="text-sm">Cargando billetera...</p>
+          </div>
+        ) : events.length === 0 ? (
           <div className="text-center py-16 text-zinc-400 dark:text-zinc-500">
             <p className="text-4xl mb-3">📭</p>
             <p className="text-sm">No hay eventos aún</p>

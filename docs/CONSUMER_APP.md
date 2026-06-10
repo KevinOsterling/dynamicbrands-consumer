@@ -54,7 +54,7 @@ Bottom nav (`src/components/BottomNav.tsx`) is built and wired. Four tabs in Pha
 |-----|------|-------|--------|
 | **Events** | 📬 | `/` | ✅ Complete — live backend |
 | **Wallet** | 💳 | `/wallet` | ⚠️ Built — pending backend endpoint |
-| **DAO** | 🗳️ | `/dao` | ⬜ Stub only |
+| **DAO** | 🗳️ | `/dao` | ⚠️ Built — voting pending (Phase 2) |
 | **AMM** | 📈 | `/amm` | ⬜ Stub only |
 
 Map screen is architecturally planned (see SYSTEM.md) but not in the current nav — will be added when Map/AR work begins.
@@ -139,7 +139,7 @@ src/
     page.tsx              ← Server component — renders EventFeed
     manifest.ts           ← PWA manifest (Next.js 16 MetadataRoute.Manifest)
     wallet/page.tsx       ← Wallet screen — asset grid, USDC hero, skeleton/empty/error states
-    dao/page.tsx          ← Stub — "Coming soon"
+    dao/page.tsx          ← DAO governance screen — proposals list, vote bar, accordion cards
     amm/page.tsx          ← Stub — "Coming soon"
   components/
     PrivyClientProvider.tsx ← 'use client' — wraps PrivyProvider with app config
@@ -154,8 +154,9 @@ src/
   hooks/
     useEventStream.ts     ← WS + Pull fallback + reconnect, wired to EventFeed
     useAssets.ts          ← GET /consumers/:wallet/assets — asset data for Wallet screen
+    useProposals.ts       ← GET /brands/:id/proposals — DAO proposals for DAO screen
   lib/
-    types.ts              ← DynamicEvent, EventType, SenderType, AssetItem
+    types.ts              ← DynamicEvent, EventType, SenderType, AssetItem, Proposal
     config.ts             ← BACKEND_URL, WS_URL, PULL_INTERVAL_MS
 ```
 
@@ -165,8 +166,9 @@ src/
 - Next.js 16 / React 19 / Tailwind v4 app running on port 3000 ✅
 - PWA manifest configured (`src/app/manifest.ts`) — name "Dynamic Brands", dark zinc theme ✅
 - Bottom nav built — 4 tabs (Events / Wallet / DAO / AMM), active tab blue, fixed bottom ✅
-- Stub pages for DAO / AMM ✅
+- Stub page for AMM ✅
 - **Wallet screen built** — asset grid, USDC hero, skeleton/empty/error states ⚠️ (pending `GET /consumers/:wallet/assets` backend endpoint)
+- **DAO screen built** — proposal cards, accordion expand, vote bar, disabled vote buttons ⚠️ (on-chain voting is Phase 2)
 - All 21 event types styled with icons and border colors ✅
 - Tamagotchi countdown timer and TAP button working ✅
 - Sender name displayed per card ✅
@@ -191,10 +193,10 @@ src/
 ---
 
 ## Next Steps
-1. Build DAO screen content (proposal list, voting)
-2. Wire `GET /consumers/:wallet/assets` backend endpoint (Wallet UI is ready)
-3. Register FCM service worker for push notifications when app is closed
-4. Build AMM screen content (NFT market listings)
+1. Wire `GET /consumers/:wallet/assets` backend endpoint (Wallet UI is ready)
+2. Register FCM service worker for push notifications when app is closed
+3. Build AMM screen content (NFT market listings)
+4. Implement on-chain DAO voting — Phase 2 (requires BrandDAO.castVote tx signing)
 5. Add Map tab to nav when Map/AR work begins
 
 ---

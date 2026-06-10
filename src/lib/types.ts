@@ -44,3 +44,16 @@ export interface AssetItem {
   weeklyRate?: number
   totalEarned?: number
 }
+
+export interface Proposal {
+  proposalId: number
+  proposer: string
+  title?: string
+  description: string
+  status: 0 | 1 | 2 | 3   // 0=Activa, 1=Aprobada, 2=Rechazada, 3=Implementada
+  votesFor: number
+  votesAgainst: number
+  submittedAt: string
+  brandId?: number
+  brandName?: string
+}

@@ -35,3 +35,12 @@ export interface DynamicEvent {
   senderName?: string
   senderType?: SenderType
 }
+
+export interface AssetItem {
+  type: 'brand_nft' | 'usdc' | 'db_nft'
+  brandId?: number
+  brandName?: string
+  balance: number
+  weeklyRate?: number
+  totalEarned?: number
+}

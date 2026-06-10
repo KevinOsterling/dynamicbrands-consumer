@@ -53,7 +53,7 @@ Bottom nav (`src/components/BottomNav.tsx`) is built and wired. Four tabs in Pha
 | Tab | Icon | Route | Status |
 |-----|------|-------|--------|
 | **Events** | 📬 | `/` | ✅ Complete — live backend |
-| **Wallet** | 💳 | `/wallet` | ⬜ Stub only |
+| **Wallet** | 💳 | `/wallet` | ⚠️ Built — pending backend endpoint |
 | **DAO** | 🗳️ | `/dao` | ⬜ Stub only |
 | **AMM** | 📈 | `/amm` | ⬜ Stub only |
 
@@ -138,7 +138,7 @@ src/
     layout.tsx            ← Root layout — PrivyClientProvider, AuthGate, BottomNav
     page.tsx              ← Server component — renders EventFeed
     manifest.ts           ← PWA manifest (Next.js 16 MetadataRoute.Manifest)
-    wallet/page.tsx       ← Stub — "Coming soon"
+    wallet/page.tsx       ← Wallet screen — asset grid, USDC hero, skeleton/empty/error states
     dao/page.tsx          ← Stub — "Coming soon"
     amm/page.tsx          ← Stub — "Coming soon"
   components/
@@ -153,8 +153,9 @@ src/
     WalletContext.tsx     ← walletAddress string | null — available to all screens
   hooks/
     useEventStream.ts     ← WS + Pull fallback + reconnect, wired to EventFeed
+    useAssets.ts          ← GET /consumers/:wallet/assets — asset data for Wallet screen
   lib/
-    types.ts              ← DynamicEvent, EventType, SenderType
+    types.ts              ← DynamicEvent, EventType, SenderType, AssetItem
     config.ts             ← BACKEND_URL, WS_URL, PULL_INTERVAL_MS
 ```
 
@@ -164,7 +165,8 @@ src/
 - Next.js 16 / React 19 / Tailwind v4 app running on port 3000 ✅
 - PWA manifest configured (`src/app/manifest.ts`) — name "Dynamic Brands", dark zinc theme ✅
 - Bottom nav built — 4 tabs (Events / Wallet / DAO / AMM), active tab blue, fixed bottom ✅
-- Stub pages for Wallet / DAO / AMM ✅
+- Stub pages for DAO / AMM ✅
+- **Wallet screen built** — asset grid, USDC hero, skeleton/empty/error states ⚠️ (pending `GET /consumers/:wallet/assets` backend endpoint)
 - All 21 event types styled with icons and border colors ✅
 - Tamagotchi countdown timer and TAP button working ✅
 - Sender name displayed per card ✅
@@ -189,9 +191,9 @@ src/
 ---
 
 ## Next Steps
-1. Register FCM service worker for push notifications when app is closed
-2. Build Wallet screen content (NFT balances, USDC balance, transaction history)
-3. Build DAO screen content (proposal list, voting)
+1. Build DAO screen content (proposal list, voting)
+2. Wire `GET /consumers/:wallet/assets` backend endpoint (Wallet UI is ready)
+3. Register FCM service worker for push notifications when app is closed
 4. Build AMM screen content (NFT market listings)
 5. Add Map tab to nav when Map/AR work begins
 
@@ -204,7 +206,7 @@ All inputs arrive from the Database via Backend API. The Consumer App never read
 |-------|--------|--------|
 | Dynamic Events feed | WS `/ws?wallet=` or GET `/consumers/:wallet/events` | ✅ Live |
 | FCM push (app closed) | Firebase → device | ⬜ Service worker pending |
-| NFT/wallet balances (Phase 1: Base assets only) | Planned — GET `/consumers/:wallet/assets` | ⬜ Not yet built |
+| NFT/wallet balances (Phase 1: Base assets only) | GET `/consumers/:wallet/assets` | ⚠️ UI built — endpoint pending |
 | Multi-chain asset display (Phase 2+: Bitcoin, ETH, others) | Multi-chain portfolio API — provider TBD | ⬜ Future |
 | Map/AR geolocation data | Oracle API → Backend | ⬜ Future |
 | AMM market listings | Planned | ⬜ Phase 2 |

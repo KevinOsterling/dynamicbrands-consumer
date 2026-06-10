@@ -126,7 +126,7 @@ Manages all three channels in one hook:
 | vault_threshold | ⚠️ | red | ws+fcm |
 | dbnft_distribution | 🪙 | teal | ws |
 | audit_requirement_brand | 📋 | red | fcm |
-| welcome | 🎉 | emerald | ws+fcm | Brand-facing — platform → brand manager |
+| welcome | 🎉 | emerald | ws+fcm | First-time consumer login — fires automatically on first WS connection |
 | c2c_message | 💬 | zinc | ws+fcm |
 
 ---
@@ -235,7 +235,7 @@ All outputs go to the Database via Backend API.
 
 ## Wallet Technology: Privy.io
 
-**Phase 1 — Custodial (pending integration):**
+**Phase 1 — Custodial — ✅ Integrated:**
 - Privy.io manages private keys on behalf of the consumer
 - Consumer authenticates with phone number or email — no seed phrase required
 - Keys are always exportable to full self-custody from day one — no platform lock-in

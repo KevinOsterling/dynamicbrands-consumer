@@ -3,7 +3,7 @@
 
 ## What This Is
 
-Dynamic Brands Consumer App is the mobile-first web wallet for the Dynamic Brands loyalty platform. Consumers use it to receive brand NFTs, collect weekly USDC cashbacks, participate in brand DAOs, and trade on the DB-NFT AMM. The home screen is a real-time Dynamic Events inbox delivered over WebSocket with a polling fallback. The wallet address (Privy.io, pending) doubles as the on-chain address for all NFT, USDC, and AMM activity — no separate wallet app needed.
+Dynamic Brands Consumer App is the mobile-first web wallet for the Dynamic Brands loyalty platform. Consumers use it to receive brand NFTs, collect weekly USDC cashbacks, participate in brand DAOs, and trade on the DB-NFT AMM. The home screen is a real-time Dynamic Events inbox delivered over WebSocket with a polling fallback. The wallet address (Privy.io) doubles as the on-chain address for all NFT, USDC, and AMM activity — no separate wallet app needed.
 
 ## Stack
 
@@ -13,7 +13,7 @@ Dynamic Brands Consumer App is the mobile-first web wallet for the Dynamic Brand
 | React | 19 | live |
 | Tailwind CSS | v4 | live |
 | TypeScript | 5 | live |
-| Privy.io | — | pending |
+| Privy.io | — | live |
 | next-pwa | — | pending |
 | next-intl | — | pending |
 
@@ -40,9 +40,11 @@ npm run start  # production server
 | Dynamic Events inbox | ✅ complete |
 | PWA manifest | ✅ complete |
 | Bottom nav | ✅ complete |
-| Wallet / DAO / AMM screens | ⬜ stub only |
+| Privy.io wallet integration | ✅ complete |
+| Wallet screen | ✅ complete |
+| DAO screen | ✅ complete (on-chain voting Phase 2) |
+| AMM screen | ⬜ stub only |
 | Map screen | ⬜ Phase 2 — not in current nav |
-| Privy.io wallet integration | ⬜ pending |
 
 ## Session Setup
 

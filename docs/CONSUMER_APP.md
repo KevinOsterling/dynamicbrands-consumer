@@ -1,7 +1,7 @@
 <!-- Source of truth: dynamicbrands-consumer/docs/CONSUMER_APP.md -->
 # CONSUMER_APP.md — Dynamic Brands Consumer App
-*Last updated: 2026-05-30*
-*Status: Phase 1 in progress — Events inbox complete, bottom nav built, stub screens added.*
+*Last updated: 2026-06-10*
+*Status: Phase 1 in progress — Auth, Events inbox, Wallet, and DAO screens complete. AMM stub only.*
 
 ---
 
@@ -53,7 +53,7 @@ Bottom nav (`src/components/BottomNav.tsx`) is built and wired. Four tabs in Pha
 | Tab | Icon | Route | Status |
 |-----|------|-------|--------|
 | **Events** | 📬 | `/` | ✅ Complete — live backend |
-| **Wallet** | 💳 | `/wallet` | ⚠️ Built — pending backend endpoint |
+| **Wallet** | 💳 | `/wallet` | ✅ Complete |
 | **DAO** | 🗳️ | `/dao` | ⚠️ Built — voting pending (Phase 2) |
 | **AMM** | 📈 | `/amm` | ⬜ Stub only |
 
@@ -167,8 +167,10 @@ src/
 - PWA manifest configured (`src/app/manifest.ts`) — name "Dynamic Brands", dark zinc theme ✅
 - Bottom nav built — 4 tabs (Events / Wallet / DAO / AMM), active tab blue, fixed bottom ✅
 - Stub page for AMM ✅
-- **Wallet screen built** — asset grid, USDC hero, skeleton/empty/error states ⚠️ (pending `GET /consumers/:wallet/assets` backend endpoint)
-- **DAO screen built** — proposal cards, accordion expand, vote bar, disabled vote buttons ⚠️ (on-chain voting is Phase 2)
+- **Wallet screen complete** — asset grid, USDC hero, skeleton/empty/error states ✅ (`GET /consumers/:wallet/assets` live on backend)
+- **DAO screen complete** — proposal cards, accordion expand, vote bar, disabled vote buttons ✅ (on-chain voting is Phase 2)
+- **EventCard accordion expand** — tap to expand/collapse, marks read via PATCH endpoint, unread blue dot ✅
+- **Welcome message** — fires automatically on first WebSocket connection ✅
 - All 21 event types styled with icons and border colors ✅
 - Tamagotchi countdown timer and TAP button working ✅
 - Sender name displayed per card ✅
@@ -193,11 +195,12 @@ src/
 ---
 
 ## Next Steps
-1. Wire `GET /consumers/:wallet/assets` backend endpoint (Wallet UI is ready)
-2. Register FCM service worker for push notifications when app is closed
-3. Build AMM screen content (NFT market listings)
-4. Implement on-chain DAO voting — Phase 2 (requires BrandDAO.castVote tx signing)
-5. Add Map tab to nav when Map/AR work begins
+1. QR scan → NFT mint flow — wire `BrandNFT.redeemQR()` end-to-end in consumer app
+2. Verify Wallet screen with live `GET /consumers/:wallet/assets` data end-to-end
+3. FCM service worker — push notifications when app is closed
+4. Multi-brand support — @@unique migration on holders table; make brandId dynamic in useProposals
+5. Implement on-chain DAO voting — Phase 2 (requires BrandDAO.castVote tx signing)
+6. AMM screen content (NFT market listings)
 
 ---
 
@@ -208,7 +211,7 @@ All inputs arrive from the Database via Backend API. The Consumer App never read
 |-------|--------|--------|
 | Dynamic Events feed | WS `/ws?wallet=` or GET `/consumers/:wallet/events` | ✅ Live |
 | FCM push (app closed) | Firebase → device | ⬜ Service worker pending |
-| NFT/wallet balances (Phase 1: Base assets only) | GET `/consumers/:wallet/assets` | ⚠️ UI built — endpoint pending |
+| NFT/wallet balances (Phase 1: Base assets only) | GET `/consumers/:wallet/assets` | ✅ Live |
 | Multi-chain asset display (Phase 2+: Bitcoin, ETH, others) | Multi-chain portfolio API — provider TBD | ⬜ Future |
 | Map/AR geolocation data | Oracle API → Backend | ⬜ Future |
 | AMM market listings | Planned | ⬜ Phase 2 |

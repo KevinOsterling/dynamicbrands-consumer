@@ -25,13 +25,25 @@ npm run build  # production build
 npm run start  # production server
 ```
 
+## Canonical Docs
+*Always read these at their canonical path. Never create a local copy.*
+
+| Doc | Canonical Path |
+|-----|---------------|
+| CONSUMER_APP.md | `C:\Users\ManiMiranda\dynamicbrands-consumer\docs\CONSUMER_APP.md` |
+| SYSTEM.md | `C:\Users\ManiMiranda\dynamicbrands-backend\docs\SYSTEM.md` *(external)* |
+| ARCHITECTURE.md | `C:\Users\ManiMiranda\dynamicbrands-backend\docs\ARCHITECTURE.md` *(external)* |
+| BACKEND.md | `C:\Users\ManiMiranda\dynamicbrands-backend\docs\BACKEND.md` *(external)* |
+
+---
+
 ## Reference Docs
 
 | File | Contents |
 |---|---|
 | `docs/CONSUMER_APP.md` | Full consumer app spec — screens, flows, wallet, map, DAO, AMM |
-| `docs/ARCHITECTURE.md` | Mirror — backend data flows, DB schema, API endpoints, event mappings |
-| `docs/SYSTEM.md` | Mirror — full system blueprint, component registry, business cycles |
+| `C:\Users\ManiMiranda\dynamicbrands-backend\docs\ARCHITECTURE.md` *(external)* | Backend data flows, DB schema, API endpoints, event mappings |
+| `C:\Users\ManiMiranda\dynamicbrands-backend\docs\SYSTEM.md` *(external)* | Full system blueprint, component registry, business cycles |
 
 ## Current State
 

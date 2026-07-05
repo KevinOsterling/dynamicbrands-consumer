@@ -5,12 +5,14 @@ import { usePathname } from 'next/navigation'
 const TABS = [
   { label: 'Events', icon: '📬', href: '/' },
   { label: 'Wallet', icon: '💳', href: '/wallet' },
+  { label: 'Scan', icon: '📷', href: '/scan' },
   { label: 'DAO', icon: '🗳️', href: '/dao' },
   { label: 'AMM', icon: '📈', href: '/amm' },
 ]
 
 export function BottomNav() {
   const pathname = usePathname()
+  if (pathname === '/redeem') return null
 
   return (
     <nav className="fixed bottom-0 inset-x-0 h-16 bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800 flex items-center">

@@ -52,7 +52,19 @@
       "PowerShell(cmd /c dir /a \"C:\\\\Users\\\\ManiMiranda\\\\dynamicbrands-consumer\")",
       "PowerShell(cmd /c dir /x \"C:\\\\Users\\\\ManiMiranda\\\\dynamicbrands-consumer\" | findstr \"CUser\")",
       "PowerShell(cmd /c dir /x \"C:\\\\Users\\\\ManiMiranda\\\\dynamicbrands-consumer\")",
-      "PowerShell(cmd /c rd /s /q \"C:\\\\Users\\\\ManiMiranda\\\\dynamicbrands-consumer\\\\CUSERS~1\" 2>&1; echo \"exit: $LASTEXITCODE\")"
+      "PowerShell(cmd /c rd /s /q \"C:\\\\Users\\\\ManiMiranda\\\\dynamicbrands-consumer\\\\CUSERS~1\" 2>&1; echo \"exit: $LASTEXITCODE\")",
+      "Bash(claude *)",
+      "Bash(npx skills *)",
+      "Bash(npm install *)",
+      "PowerShell(if \\(Test-Path \"C:\\\\Users\\\\ManiMiranda\\\\dynamicbrands-consumer\\\\node_modules\\\\@privy-io\\\\react-auth\\\\package.json\"\\) { \\(Get-Content \"C:\\\\Users\\\\ManiMiranda\\\\dynamicbrands-consumer\\\\node_modules\\\\@privy-io\\\\react-auth\\\\package.json\" | ConvertFrom-Json\\).version } else { \"not installed yet\" })",
+      "Bash(npm run *)",
+      "Bash(Get-Content *)",
+      "Bash(xargs grep -l \"SendTransaction\")",
+      "Bash(npx tsc *)",
+      "Bash(wait)",
+      "Bash(tasklist)",
+      "Bash(taskkill //F //PID 6584)",
+      "Bash(npx tsx *)"
     ]
   }
 }

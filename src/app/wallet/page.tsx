@@ -1,4 +1,5 @@
 'use client'
+import Link from 'next/link'
 import { useWalletContext } from '@/context/WalletContext'
 import { useAssets } from '@/hooks/useAssets'
 import type { AssetItem } from '@/lib/types'
@@ -205,12 +206,12 @@ export default function WalletPage() {
         )}
 
         {status === 'empty' && (
-          <div className="text-center py-12">
+          <Link href="/scan" className="block text-center py-12">
             <QrIcon />
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-4 max-w-xs mx-auto leading-relaxed">
               Aún no tienes activos. ¡Escanea un código QR para recibir tu primer NFT!
             </p>
-          </div>
+          </Link>
         )}
 
         {status === 'success' && (

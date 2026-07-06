@@ -44,6 +44,26 @@ npm run build  # Production build
 npm run start  # Production server
 ```
 
+### Mobile testing (phone → dev servers via cloudflared tunnels)
+*Proven setup from the 2026-07-05 Android QR→mint E2E test.*
+
+1. **Session hygiene first:** kill stray `node` / `next dev` processes before starting servers
+   (backend: `npm run kill && npm run dev`; check nothing else owns port 3000). Zombie dev
+   servers from earlier sessions caused an origin-dependent hang (stale process serving the
+   tunnel) and a Turbopack `0xc0000142` panic — if that panic appears, also clear `.next`.
+2. **Two quick tunnels** (URLs are random per run — every step below must be redone each session):
+   `cloudflared tunnel --url http://localhost:3000` (app) and `--url http://localhost:3002` (backend).
+3. **App → backend wiring:** set `NEXT_PUBLIC_BACKEND_URL=https://<backend-tunnel>` in `.env.local`
+   (WS URL derives automatically; `config.ts` handles https→wss).
+4. **Backend CORS:** set `CORS_ORIGINS=https://<app-tunnel>` in the backend `.env`
+   (comma-separated extra origins, appended to the localhost defaults in `src/index.ts`).
+5. **Next dev resources cross-origin:** set `ALLOWED_DEV_ORIGINS=<app-tunnel-host>` (no scheme) in
+   `.env.local` — `next.config.ts` feeds it to `allowedDevOrigins`; without it Next 16 blocks
+   HMR and dev resources for the tunnel host.
+6. **Privy dashboard:** add `https://<app-tunnel>` to Allowed origins/domains for the app ID.
+7. Restart both servers after env changes. First tunnel page load moves ~13 MB of dev-mode JS —
+   allow 10–30 s on mobile before judging it stuck.
+
 ---
 
 ## Navigation Structure
@@ -205,6 +225,7 @@ src/
 - Bottom nav built — 4 tabs (Events / Wallet / DAO / AMM), active tab blue, fixed bottom ✅
 - Stub page for AMM ✅
 - **Wallet screen complete** — asset grid, USDC hero, skeleton/empty/error states ✅ (`GET /consumers/:wallet/assets` live on backend)
+- **Wallet address tap-to-copy row** — "Tu dirección" under the Wallet header: truncated `0x1234…abcd` display, tap copies the full address, "✓ Copiado" feedback ✅ (added 2026-07-05)
 - **DAO screen complete** — proposal cards, accordion expand, vote bar, disabled vote buttons ✅ (on-chain voting is Phase 2)
 - **EventCard accordion expand** — tap to expand/collapse, marks read via PATCH endpoint, unread blue dot ✅
 - **Welcome message** — fires automatically on first WebSocket connection ✅
@@ -236,7 +257,7 @@ src/
 ---
 
 ## Next Steps
-1. Verify Wallet screen with live `GET /consumers/:wallet/assets` data end-to-end
+1. ~~Verify Wallet screen with live `GET /consumers/:wallet/assets` data end-to-end~~ ✅ done 2026-07-05 (Android E2E; the listener mint double-count that briefly showed "2 NFTs" was fixed same session — see dashboard BACKLOG.md)
 2. FCM service worker — push notifications when app is closed
 3. Multi-brand support — @@unique migration on holders table; make brandId dynamic in useProposals
 4. Implement on-chain DAO voting — Phase 2 (requires BrandDAO.castVote tx signing)

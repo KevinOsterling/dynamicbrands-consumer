@@ -1,4 +1,5 @@
 'use client'
+import { useState } from 'react'
 import Link from 'next/link'
 import { useWalletContext } from '@/context/WalletContext'
 import { useAssets } from '@/hooks/useAssets'
@@ -41,6 +42,46 @@ function QrIcon() {
       <path d="M14 17v4" />
       <path d="M17 21h4v-4" />
     </svg>
+  )
+}
+
+function AddressRow({ address }: { address: string }) {
+  const [copied, setCopied] = useState(false)
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(address)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // clipboard unavailable (non-secure context) — leave silently
+    }
+  }
+
+  return (
+    <button
+      onClick={copy}
+      className="mt-1.5 flex items-center gap-2 rounded-lg bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 py-1.5 active:bg-zinc-200 dark:active:bg-zinc-800 transition-colors"
+      aria-label="Copiar dirección de billetera"
+    >
+      <span className="text-[11px] font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
+        Tu dirección
+      </span>
+      <span className="text-xs font-mono text-zinc-600 dark:text-zinc-300">
+        {truncateAddress(address)}
+      </span>
+      {copied ? (
+        <span className="text-xs font-semibold text-emerald-500">✓ Copiado</span>
+      ) : (
+        <svg
+          width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          strokeWidth="2" className="text-zinc-400 dark:text-zinc-500" aria-hidden="true"
+        >
+          <rect x="9" y="9" width="13" height="13" rx="2" />
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+        </svg>
+      )}
+    </button>
   )
 }
 
@@ -144,11 +185,7 @@ export default function WalletPage() {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">Mi Billetera</h1>
-          {walletAddress && (
-            <p className="text-xs font-mono text-zinc-400 dark:text-zinc-500 mt-0.5">
-              {truncateAddress(walletAddress)}
-            </p>
-          )}
+          {walletAddress && <AddressRow address={walletAddress} />}
         </div>
 
         {/* USDC hero card */}

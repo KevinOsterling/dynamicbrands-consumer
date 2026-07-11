@@ -1,5 +1,6 @@
-// Matches dynamicbrands-backend/src/listener.ts BRAND_NFT_ADDRESS and chain (Base Sepolia)
-export const BRAND_NFT_ADDRESS = '0x02a85d38d679e956a7640445a88dae0135a0002c' as const
+// Matches dynamicbrands-backend ACTIVE_BRAND_NFT (.env) and chain (Base Sepolia)
+// V4 (brandMint redeploy, 2026-07-10) — dynamicbrands/deployments/v4-baseSepolia.json
+export const BRAND_NFT_ADDRESS = '0x1de04c3b3ee03d3b17fc09f841679152175013e0' as const
 export const CHAIN_ID = 84532
 
 export const BRAND_NFT_ABI = [

@@ -1,6 +1,6 @@
 <!-- Source of truth: dynamicbrands-consumer/docs/CONSUMER_APP.md -->
 # CONSUMER_APP.md — Dynamic Brands Consumer App
-*Last updated: 2026-06-10*
+*Last updated: 2026-07-10*
 *Status: Phase 1 in progress — Auth, Events inbox, Wallet, and DAO screens complete. AMM stub only.*
 
 ---
@@ -68,7 +68,7 @@ npm run start  # Production server
 
 ## Navigation Structure
 
-Bottom nav (`src/components/BottomNav.tsx`) is built and wired. Four tabs in Phase 1:
+Bottom nav (`src/components/BottomNav.tsx`) is built and wired. Five tabs in Phase 1:
 
 | Tab | Icon | Route | Status |
 |-----|------|-------|--------|
@@ -81,6 +81,16 @@ Bottom nav (`src/components/BottomNav.tsx`) is built and wired. Four tabs in Pha
 `/redeem` is a standalone deep-link route reachable via QR scan (not a bottom nav tab) — see QR Flow Architecture below.
 
 Map screen is architecturally planned (see SYSTEM.md) but not in the current nav — will be added when Map/AR work begins.
+
+---
+
+## Map (Phase 2)
+
+Geolocation view of the physical world overlaid with Dynamic Brands events.
+
+- Location pins marking active brand events, Oracle events, AR entity positions
+- Consumer navigates to pin locations to participate in location-based campaigns
+- Foundation for the Living NFT / Ostrich scenario: entities visible on map before catchable in AR
 
 ---
 
@@ -178,6 +188,8 @@ Two complementary flows cover QR-based NFT redemption, depending on whether the 
 | welcome | 🎉 | emerald | ws+fcm | First-time consumer login — fires automatically on first WS connection |
 | c2c_message | 💬 | zinc | ws+fcm |
 
+**Future:** Consumer may be able to filter which brands' events appear in their inbox.
+
 ---
 
 ## Project Structure
@@ -214,17 +226,25 @@ src/
     types.ts              ← DynamicEvent, EventType, SenderType, AssetItem, Proposal
     config.ts             ← BACKEND_URL, WS_URL, PULL_INTERVAL_MS, REDEEM_BASE_URL
     qr.ts                  ← parseQRPayload (JSON) + parseQRSearchParams (URL params)
-    brandNFT.ts            ← BrandNFT ABI, contract address, chain ID
+    brandNFT.ts            ← BrandNFT ABI, contract address, chain ID — V4 address
+                             0x1de04c3b3ee03d3b17fc09f841679152175013e0 since 2026-07-10
+                             (brandMint redeploy; the /redeem flow's redeemQR tx target)
 ```
+
+> **Contract addresses (2026-07-10):** the app holds only the BrandNFT address (redeemQR
+> target) — now V4. There are **no direct VaultV3 reads in the app**: all vault-derived
+> figures (weekly cashback, totals) arrive via `GET /consumers/:wallet/assets` from the
+> backend, which was cut over to the V4 addresses the same day.
 
 ---
 
 ## Current State (June 2026)
 - Next.js 16 / React 19 / Tailwind v4 app running on port 3000 ✅
 - PWA manifest configured (`src/app/manifest.ts`) — name "Dynamic Brands", dark zinc theme ✅
-- Bottom nav built — 4 tabs (Events / Wallet / DAO / AMM), active tab blue, fixed bottom ✅
+- Bottom nav built — 5 tabs (Events / Wallet / Scan / DAO / AMM), active tab blue, fixed bottom ✅
 - Stub page for AMM ✅
 - **Wallet screen complete** — asset grid, USDC hero, skeleton/empty/error states ✅ (`GET /consumers/:wallet/assets` live on backend)
+  - ⚠️ **Known issue:** "Cashback semanal" and "Total ganado" figures are wrong under V3 — the backend computes them from V2-legacy distribution fields (root cause found 2026-07-10; likely the July-5 $8→$2 anomaly). Canonical entry + correct formula: dashboard `BACKLOG.md` → "Wallet cashback figure".
 - **Wallet address tap-to-copy row** — "Tu dirección" under the Wallet header: truncated `0x1234…abcd` display, tap copies the full address, "✓ Copiado" feedback ✅ (added 2026-07-05)
 - **DAO screen complete** — proposal cards, accordion expand, vote bar, disabled vote buttons ✅ (on-chain voting is Phase 2)
 - **EventCard accordion expand** — tap to expand/collapse, marks read via PATCH endpoint, unread blue dot ✅
@@ -296,6 +316,9 @@ All outputs go to the Database via Backend API.
 
 ## Wallet Technology: Privy.io
 
+### APY / Earnings Display Principle
+"Total USDC Earned" (cumulative, all-time) is the most emotionally powerful metric. Always display it prominently. A consumer who has earned $4.73 over 3 months feels fundamentally different than one who "earned $0.03 this week."
+
 **Phase 1 — Custodial — ✅ Integrated:**
 - Privy.io manages private keys on behalf of the consumer
 - Consumer authenticates with phone number or email — no seed phrase required
@@ -318,90 +341,7 @@ All outputs go to the Database via Backend API.
 
 ---
 
-## Technological Interface Roadmap
-| Phase | Interface | Key Features |
-|-------|-----------|-------------|
-| Phase 1 | Smartphone (mobile web) | QR scan, full wallet, DAO, GPS, Dynamic Events inbox |
-| Phase 3+ | Smart glasses | Persistent AR overlay, NFT entities in field of vision |
-| Phase 3+ | VR | Virtual brand environments |
-| Future | Smartwatch, NFC, IoT | Additional Oracle event sources |
-
----
-
-## Screen Specifications & Wallet Architecture
-
-*The following sections existed in the dashboard repo's CONSUMER_APP.md (April 2026) but were absent from this file. Review each block and merge or discard as appropriate.*
-
----
-
-### Screen Specifications
-
-#### Dynamic Events (Home / Inbox)
-A rich event inbox — like email. Everything relevant to the consumer in one feed.
-
-**Event types (examples — not exhaustive):**
-- **Brand web option** — brand announcements, e.g. a brand giving away NFTs on their website or elsewhere
-- **DAO proposal** — new governance proposal from a brand the consumer holds
-- **Oracle event** — external event relevant to an active campaign
-- **Brand cashback** — Friday distribution confirmation and amount received
-- **User Award** — campaign condition met, award received
-- **Brand/s campaign** — new campaign launched by a brand the consumer holds
-- **User event** — anything a user (themselves or another) did that is relevant to their active campaigns
-- **New NFTs** — new NFT types or availability relevant to the consumer
-
-**Tamagotchi mechanic lives here:** Individual inbox messages can contain a tap button with a countdown timer. Consumer must open the message and tap within the time window (24–48h to open, 10 seconds to complete once opened) or lose the reward / drop a tier. The action is intentionally trivial — the cost is in forgetting, not in effort.
-
-**Future:** Consumer may be able to filter which brands' events appear in their inbox.
-
----
-
-#### Wallet (Dynamic Brands Wallet)
-A full sovereign crypto wallet displaying ALL assets held by the consumer regardless of source.
-
-**Asset grid:**
-- One tile per brand NFT held (displays brand logo/image)
-- One tile per crypto asset held (USDC, Bitcoin, others)
-- Tapping a brand NFT tile → detail view: NFT balance, APY, cashback history, total earned, DAO participation, campaign eligibility
-- USDC tile → total USDC balance across all sources (source is irrelevant — it is the consumer's money)
-
-**Sovereignty principle:** USDC can buy more NFTs on the DB AMM, be sent to any external address, or be used entirely outside Dynamic Brands. Bitcoin and other crypto assets are equally unrestricted.
-
-**AMM access:** The AMM tab is always reachable — consumer can go buy more NFTs at any time directly from their portfolio.
-
-**APY display principle:** "Total USDC Earned" (cumulative, all-time) is the most emotionally powerful metric. Always display it prominently. A consumer who has earned $4.73 over 3 months feels fundamentally different than one who "earned $0.03 this week."
-
----
-
-#### Map
-Geolocation view of the physical world overlaid with Dynamic Brands events.
-
-- Location pins marking active brand events, Oracle events, AR entity positions
-- Consumer navigates to pin locations to participate in location-based campaigns
-- Foundation for the Living NFT / Ostrich scenario: entities visible on map before catchable in AR
-
----
-
-#### DAO
-Brand governance interface.
-
-- Active proposals from brands the consumer holds
-- Voting (YES/NO, weighted by NFT balance)
-- Consumer's own proposal submission
-- Contribution history — proposals submitted, votes cast, rewards earned from implemented proposals
-
----
-
-#### AMM
-Direct access to the DB NFT AMM.
-
-- Buy brand NFTs (primary market from brands, secondary from other consumers)
-- Sell brand NFTs
-- View pricing and liquidity
-- All transactions settle through the consumer's in-app wallet address
-
----
-
-### The App IS the Wallet (use cases)
+## The App IS the Wallet (use cases)
 
 The Privy.io-powered wallet address embedded in the app is the address used for:
 - Receiving brand NFTs from QR/AR redemptions
@@ -415,7 +355,7 @@ No separate wallet app needed.
 
 ---
 
-### How the Wallet Reads Crypto Balances
+## How the Wallet Reads Crypto Balances
 
 A crypto wallet does not store balances — it holds the private key and queries the blockchain to read what is at that address.
 
@@ -429,9 +369,12 @@ Showing Bitcoin, Ethereum, or other non-Base assets requires a multi-chain RPC p
 
 ---
 
-### Architectural Notes
+## Technological Interface Roadmap
+| Phase | Interface | Key Features |
+|-------|-----------|-------------|
+| Phase 1 | Smartphone (mobile web) | QR scan, full wallet, DAO, GPS, Dynamic Events inbox |
+| Phase 3+ | Smart glasses | Persistent AR overlay, NFT entities in field of vision |
+| Phase 3+ | VR | Virtual brand environments |
+| Future | Smartwatch, NFC, IoT | Additional Oracle event sources |
 
-- Separate project from the Brand Intranet — different repo, deployment, and tech stack.
-- Wallet holds ALL crypto assets, not just Dynamic Brands-originated ones. Schema and API must support arbitrary asset types.
-- Map/AR/VR screens must be architecturally reserved from Phase 1. Build Phase 1 so the Ostrich is possible.
-- Consumer identity (phone/email → wallet address) must be consistent across all touchpoints.
+---
